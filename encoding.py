@@ -12,9 +12,9 @@ class TextEncoder(type):
         check_methods = ['encode', 'decode']
         for method in check_methods:
             signature = inspect.signature(dct[method])
-            expected_params = {'self', 'text'}
-            params = set(signature.parameters.keys())
-            if not expected_params.issubset(params) or signature.return_annotation != str:
+            expected_params = ['self', 'text']
+            params = list(signature.parameters.keys())
+            if not expected_params != params or signature.return_annotation != str:
                 raise TypeError(f"Method '{method}' must take 'self' and 'text' parameters and return a string")
 
         return super().__new__(cls, name, bases, dct)

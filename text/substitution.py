@@ -7,7 +7,7 @@ class CaesarCipher(metaclass=TextEncoder):
         self.__is_key_default = True
 
     def encode(self, text: str) -> str:
-        enc_text = ""
+        enc_text = ''
 
         for i in range(len(text)):
             rep_letter = (ord(text[i]) + self.KEY) % 149187
