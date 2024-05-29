@@ -14,6 +14,8 @@ class RailFenceCipher(metaclass=TextEncoder):
             raise ValueError("The key in Rail Fence Cipher cannot be less than 2")
 
     def encode(self, text: str) -> str:
+        if any(ord(char) > 127 for char in text):
+            raise ValueError("Text Encoders cannot handle characters with ASCII > 127")
         self.rf_arr = np.zeros((self.KEY, len(text)), dtype='str')
         enc_text = ''
 
@@ -26,6 +28,9 @@ class RailFenceCipher(metaclass=TextEncoder):
         return enc_text
 
     def decode(self, text: str) -> str:
+        if any(ord(char) > 127 for char in text):
+            raise ValueError("Text Encoders cannot handle characters with ASCII > 127")
+
         self.rf_arr = np.zeros((self.KEY, len(text)), dtype='str')
         text_index = 0
 
@@ -86,6 +91,9 @@ class ColumnarTranspositionCipher(metaclass=TextEncoder):
         self.ORDER_LIST = self.__get_order_list(self.KEY)
 
     def encode(self, text: str) -> str:
+        if any(ord(char) > 127 for char in text):
+            raise ValueError("Text Encoders cannot handle characters with ASCII > 127")
+
         if self.FILLER in text:
             warnings.warn(f"Filler '{self.FILLER}' is present in the text which might lead to unwanted issues.")
 
@@ -109,6 +117,9 @@ class ColumnarTranspositionCipher(metaclass=TextEncoder):
         return enc_text
 
     def decode(self, text: str) -> str:
+        if any(ord(char) > 127 for char in text):
+            raise ValueError("Text Encoders cannot handle characters with ASCII > 127")
+
         rows = len(text)//len(self.KEY)
         self.txt_arr = np.zeros((rows, len(self.KEY)), dtype='str')
 
