@@ -1,3 +1,15 @@
+"""
+utils.py
+
+This module provides utility classes for text encoding and decoding operations.
+
+Classes:
+    TextEncoder -- A metaclass ensuring encoders implement 'encode' and 'decode' methods.
+    Pipeline -- A class for combining multiple encoders in sequence.
+    Salt -- A class for adding and removing salt from text to enhance security.
+    FileEncoder -- A class for encoding and decoding text files using a specified encoder.
+"""
+
 import inspect
 import random
 
@@ -5,7 +17,37 @@ from tqdm import tqdm
 
 
 class TextEncoder(type):
+    """
+    Metaclass for enforcing requirements on subclasses implementing encoding and decoding methods.
+
+    This metaclass ensures that subclasses implement both an `encode` and a `decode` method,
+    and that these methods adhere to a specific signature and return type.
+
+    Methods:
+        - __new__(cls, name, bases, dct) -> type: Creates a new class object.
+            Raises TypeError if either `encode` or `decode` method is missing in the class,
+            or if these methods are not callable, or if they do not have the correct signature
+            (taking `self` and `text` parameters and returning a string).
+    """
+
     def __new__(cls, name, bases, dct):
+        """
+        Creates a new class object.
+
+        Parameters:
+            - name (str): The name of the class being created.
+            - bases (tuple): The base classes of the class being created.
+            - dct (dict): The dictionary containing the attributes of the class being created.
+
+        Returns:
+            - type: The newly created class object.
+
+        Raises:
+            - TypeError: If either `encode` or `decode` method is missing in the class,
+              or if these methods are not callable, or if they do not have the correct signature
+              (taking `self` and `text` parameters and returning a string).
+        """
+
         if 'encode' not in dct or 'decode' not in dct:
             raise TypeError(f"Class {name} must implement both encode and decode methods")
 
@@ -24,7 +66,38 @@ class TextEncoder(type):
 
 
 class Pipeline:
+    """
+    A class for creating and applying pipelines to encode and decode text using multiple encoders.
+
+    Attributes:
+        - encoder_names (list): A list of names of the encoders in the pipeline.
+
+    Methods:
+        - __init__(self, encoders: list): Initializes the Pipeline object with a list of encoders.
+        - encode(self, text: str) -> str: Encodes the input text using the encoders in the pipeline.
+        - decode(self, text: str) -> str: Decodes the input text using the encoders in reverse order.
+        - add_encoders(self, encoders: list): Adds additional encoders to the pipeline.
+        - remove_encoders(self, encoder_names: list): Removes encoders from the pipeline by their names.
+
+    Private Methods:
+        - __is_valid(self, encoders) -> bool: Checks if the format of the encoders is valid.
+        - __get_encoder_names(self): Retrieves and updates the list of encoder names.
+
+    Raises:
+        - ValueError: If the format of the encoders is invalid or if there are duplicate encoder names.
+    """
+
     def __init__(self, encoders: list):
+        """
+        Initializes the Pipeline object with a list of encoders.
+
+        Parameters:
+            - encoders (list): A list of tuples containing encoder class objects and their names.
+
+        Raises:
+            - ValueError: If the format of the encoders is invalid.
+        """
+
         self.encoder_names = []
 
         if self.__is_valid(encoders):
@@ -34,18 +107,48 @@ class Pipeline:
             raise ValueError("Encoders must be passed as a tuple of class object and names of the encoders.")
 
     def encode(self, text: str) -> str:
+        """
+        Encodes the input text using the encoders in the pipeline.
+
+        Parameters:
+            - text (str): The input text to be encoded.
+
+        Returns:
+            - str: The encoded text.
+        """
+
         for encoder in self.encoders:
             text = encoder[0].encode(text)
 
         return text
 
     def decode(self, text: str) -> str:
+        """
+        Decodes the input text using the encoders in reverse order.
+
+        Parameters:
+            - text (str): The input text to be decoded.
+
+        Returns:
+            - str: The decoded text.
+        """
+
         for decoder in self.encoders[::-1]:
             text = decoder[0].decode(text)
 
         return text
 
     def add_encoders(self, encoders: list):
+        """
+        Adds additional encoders to the pipeline.
+
+        Parameters:
+            - encoders (list): A list of tuples containing additional encoder class objects and their names.
+
+        Raises:
+            - ValueError: If the format of the encoders is invalid.
+        """
+
         if self.__is_valid(encoders):
             self.encoders.extend(encoders)
             self.__get_encoder_names()
@@ -53,6 +156,16 @@ class Pipeline:
             raise ValueError("Encoders must be passed as tuples of class object and names of the encoders.")
 
     def remove_encoders(self, encoder_names: list):
+        """
+        Removes encoders from the pipeline by their names.
+
+        Parameters:
+            - encoder_names (list): A list of names of the encoders to be removed.
+
+        Raises:
+            - ValueError: If the provided encoder names are invalid or if the encoders are not found in the pipeline.
+        """
+
         for encoder_name in encoder_names:
             if type(encoder_name) != str:
                 raise ValueError("Encoders must be passed as a list of encoder names.")
@@ -68,6 +181,16 @@ class Pipeline:
         self.__get_encoder_names()
 
     def __is_valid(self, encoders) -> bool:
+        """
+        Checks if the format of the encoders is valid.
+
+        Parameters:
+            - encoders: A list of tuples containing encoder class objects and their names.
+
+        Returns:
+            - bool: True if the format is valid, False otherwise.
+        """
+
         for encoder in encoders:
             if len(encoder) != 2:
                 return False
@@ -78,6 +201,10 @@ class Pipeline:
         return True
 
     def __get_encoder_names(self):
+        """
+        Retrieves and updates the list of encoder names.
+        """
+
         self.encoder_names.clear()
         for encoder in self.encoders:
             if encoder in self.encoder_names:
@@ -86,44 +213,97 @@ class Pipeline:
 
 
 class Salt:
-    def __init__(self, position: str = 'all', random_seed: int = 42, min_length: int = 2, max_length: int = 7):
-        random.seed(random_seed)
-        self.RANDOM_STATE = random.getstate()
-        self.CHARACTERS = [chr(i) for i in range(33, 127)]
-        self.MIN_LENGTH = min_length
-        self.MAX_LENGTH = max_length
-        self.POSITIONS = ['front', 'end', 'all']
+    """
+    A class for adding and removing salt from text before encoding and after decoding.
 
-        if position in self.POSITIONS:
-            self.POSITION = position
+    Attributes:
+        - random_state (tuple): The random state used for generating salt.
+        - characters (list): A list of characters used for generating salt.
+        - min_length (int): The minimum length of salt.
+        - max_length (int): The maximum length of salt.
+        - position (str): The position at which salt is added ('front', 'end', or 'between').
+
+    Methods:
+        - __init__(self, position: str = 'between', random_seed: int = 42, min_length: int = 2, max_length: int = 7):
+            Initializes the Salt object with the specified parameters.
+        - encode(self, text: str) -> str: Adds salt to the input text based on the specified position.
+        - decode(self, text: str) -> str: Removes salt from the input text based on the specified position.
+
+    Private Methods:
+        - __get_salt(self) -> str: Generates random salt of variable length.
+    """
+
+    def __init__(self, position: str = 'between', random_seed: int = 42, min_length: int = 2, max_length: int = 7):
+        """
+        Initializes the Salt object with the specified parameters.
+
+        Parameters:
+            - position (str): The position at which salt is added ('front', 'end', or 'between') (default: 'between').
+            - random_seed (int): The random seed for generating salt (default: 42).
+            - min_length (int): The minimum length of salt (default: 2).
+            - max_length (int): The maximum length of salt (default: 7).
+
+        Raises:
+            - ValueError: If an invalid salt position is provided.
+        """
+
+        random.seed(random_seed)
+        self.random_state = random.getstate()
+        self.characters = [chr(i) for i in range(33, 127)]
+        self.min_length = min_length
+        self.max_length = max_length
+        self.positions = ['front', 'end', 'between']
+
+        if position in self.positions:
+            self.position = position
         else:
-            raise ValueError(f"Salt position cannot be '{position}'. Valid salt positons: {', '.join(self.POSITIONS)}")
+            raise ValueError(f"Salt position cannot be '{position}'. Valid salt positons: {', '.join(self.positions)}")
 
     def encode(self, text: str) -> str:
-        random.setstate(self.RANDOM_STATE)
-        match self.POSITION:
+        """
+        Adds salt to the input text based on the specified position.
+
+        Parameters:
+            - text (str): The input text to which salt is added.
+
+        Returns:
+            - str: The text with salt added.
+        """
+
+        random.setstate(self.random_state)
+        match self.position:
             case 'front':
                 return self.__get_salt() + text
 
             case 'end':
                 return text + self.__get_salt()
 
-            case 'all':
+            case 'between':
                 salts = []
                 for i in range(len(text)):
                     salts.append(self.__get_salt())
                 return ''.join([text[i] + salts[i] for i in range(len(salts))])
 
     def decode(self, text: str) -> str:
-        random.setstate(self.RANDOM_STATE)
-        match self.POSITION:
+        """
+        Removes salt from the input text based on the specified position.
+
+        Parameters:
+            - text (str): The input text from which salt is removed.
+
+        Returns:
+            - str: The text with salt removed.
+        """
+
+        random.setstate(self.random_state)
+        match self.position:
             case 'front':
                 return text.removeprefix(self.__get_salt())
 
             case 'end':
                 return text.removesuffix(self.__get_salt())
 
-            case 'all':
+            case 'between':
                 pure_text = ''
                 try:
                     i = 0
@@ -134,14 +314,52 @@ class Salt:
                     return pure_text
 
     def __get_salt(self) -> str:
-        return ''.join(random.choices(self.CHARACTERS, k=random.randint(self.MIN_LENGTH, self.MAX_LENGTH)))
+        """
+        Generates random salt of variable length.
+
+        Returns:
+            - str: The randomly generated salt.
+        """
+
+        return ''.join(random.choices(self.characters, k=random.randint(self.min_length, self.max_length)))
 
 
 class FileEncoder:
+    """
+    A class for encoding and decoding text files using a specified encoder.
+
+    Attributes:
+        - encoder (object): The encoder/pipeline object used for encoding and decoding.
+
+    Methods:
+        - __init__(self, encoder: object): Initializes the FileEncoder object with the specified encoder.
+        - encode(self, file: str, file_out: str = None, progressbar: bool = False) -> None:
+            Encodes the contents of a text file and writes the encoded text to the same or another file.
+        - decode(self, file: str, file_out: str = None, progressbar: bool = False) -> None:
+            Decodes the contents of an encoded text file and writes the decoded text to the same or another file.
+    """
+
     def __init__(self, encoder: object):
+        """
+        Initializes the FileEncoder object with the specified encoder.
+
+        Parameters:
+            - encoder (object): The encoder/pipeline object used for encoding and decoding.
+        """
+
         self.encoder = encoder
 
-    def encode(self, file: str, file_out: str = None, progressbar: bool = True) -> None:
+    def encode(self, file: str, file_out: str = None, progressbar: bool = False) -> None:
+        """
+        Encodes the contents of a text file and writes the encoded text to the same or another file.
+
+        Parameters:
+            - file (str): The path to the input text file to be encoded.
+            - file_out (str): The path to the output text file where the encoded text will be written
+              (default: None, which overwrites the input file).
+            - progressbar (bool): Whether to display a progress bar during encoding (default: False).
+        """
+
         enc_text = ''
 
         with open(file, 'r') as f:
@@ -161,7 +379,17 @@ class FileEncoder:
         with open(file_out if file_out else file, 'w') as f:
             f.write(enc_text)
 
-    def decode(self, file: str, file_out: str = None, progressbar: bool = True) -> None:
+    def decode(self, file: str, file_out: str = None, progressbar: bool = False) -> None:
+        """
+        Decodes the contents of an encoded text file and writes the decoded text to the same or another file.
+
+        Parameters:
+            - file (str): The path to the input text file to be decoded.
+            - file_out (str): The path to the output text file where the decoded text will be written
+              (default: None, which overwrites the input file).
+            - progressbar (bool): Whether to display a progress bar during decoding (default: False).
+        """
+
         dec_text = ''
 
         with open(file, 'r') as f:
