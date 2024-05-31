@@ -388,112 +388,83 @@ class AffineCipher(metaclass=TextEncoder):
 
 
 class VigenereCipher(metaclass=TextEncoder):
-    """
-    VigenereCipher class for encoding and decoding text using the Vigenere Cipher technique.
-
-    Attributes:
-        key (str): The key to be used for encoding and decoding (default: 'key').
-        alpha_only (bool): Flag to indicate if the cipher should only operate on alphabetic characters (default: False).
-
-    Methods:
-        __init__(self, key: str = 'key', alpha_only: bool = False):
-            Initializes the VigenereCipher object with the specified key and mode.
-        encode(self, text: str) -> str:
-            Encodes the input text using the Vigenere Cipher.
-        decode(self, text: str) -> str:
-            Decodes the input text using the Vigenere Cipher.
-    """
-
-    def __init__(self, key: str = 'key', alpha_only: bool = False):
-        """
-        Initializes the VigenereCipher object with the specified key and mode.
-
-        Parameters:
-            key (str, optional): The key to be used for encoding and decoding (default: 'key').
-            alpha_only (bool, optional): Flag to indicate if the cipher should only operate on alphabetic characters
-                (default: False).
-
-        Warns:
-            UserWarning: If alpha_only is set to True, a warning is issued indicating that the cipher is in
-                Alphabet only mode.
-        """
-
-        self.key = key
-        self.alpha_only = alpha_only
-        if self.alpha_only:
+    def __init__(self, key: str = 'KEY', alpha_only: bool = False):
+        self.KEY = key
+        self.ALPHA_ONLY = alpha_only
+        if self.ALPHA_ONLY:
             warnings.warn(
                 message="Vigenere Cipher is in Alphabet only mode. To change it, set 'alpha_only' to False",
                 category=UserWarning
             )
 
     def encode(self, text: str) -> str:
-        """
-        Encodes the input text using the Vigenere Cipher.
-
-        Parameters:
-            text (str): The text to be encoded.
-
-        Returns:
-            str: The encoded text.
-
-        Raises:
-            ValueError: If any character in the input text has ASCII value greater than 127.
-        """
-
         if any(ord(char) > 127 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII > 127")
 
-        final_key = (self.key * (len(text) // len(self.key) + 1)).upper()
+        final_key = (self.KEY * (len(text) // len(self.KEY) + 1)).upper()
         enc_text = ""
+        matrix = self.__generate_matrix()
 
         for i in range(len(text)):
-            if self.alpha_only:
-                if 65 <= ord(text[i]) <= 90:
-                    rep_letter = chr(((ord(text[i]) + ord(final_key[i])) % 26) + 65)
-                elif 97 <= ord(text[i]) <= 122:
-                    rep_letter = chr(((ord(text[i].upper()) + ord(final_key[i])) % 26) + 65).lower()
+            if self.ALPHA_ONLY:
+                if final_key[i].isalpha():
+                    if 65 <= ord(text[i]) <= 90:
+                        rep_letter = matrix[ord(text[i]) - 65][ord(final_key[i].upper()) - 65]
+                    elif 97 <= ord(text[i]) <= 122:
+                        rep_letter = matrix[ord(text[i]) - 97][ord(final_key[i].lower()) - 97]
+                        rep_letter = rep_letter.lower()
+                    else:
+                        rep_letter = text[i]
                 else:
-                    rep_letter = text[i]
+                    raise ValueError("Key must be composed of alphabets in Alphabet Only mode")
             else:
-                rep_letter = chr(((ord(text[i]) + ord(final_key[i])) % 128) + 63)
-            enc_text += rep_letter
+                rep_letter = matrix[ord(text[i])][ord(final_key[i])]
 
+            enc_text += rep_letter
         return enc_text
 
     def decode(self, text: str) -> str:
-        """
-        Decodes the input text using the Vigenere Cipher.
-
-        Parameters:
-            text (str): The text to be decoded.
-
-        Returns:
-            str: The decoded text.
-
-        Raises:
-            ValueError: If any character in the input text has ASCII value greater than 127.
-        """
-
         if any(ord(char) > 127 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII > 127")
 
-        final_key = (self.key * (len(text) // len(self.key) + 1)).upper()
+        final_key = (self.KEY * (len(text) // len(self.KEY) + 1)).upper()
         dec_text = ""
+        matrix = self.__generate_matrix()
 
         for i in range(len(text)):
-            if self.alpha_only:
+            if self.ALPHA_ONLY and not final_key[i].isalpha():
+                raise ValueError("Key must be composed of alphabets in Alphabet Only mode")
+
+            index = np.where(matrix[0] == final_key[i])
+            letter = text[i].upper() if self.ALPHA_ONLY else text[i]
+
+            for j in range(len(matrix)):
+                if matrix[j][index] == letter:
+                    break
+
+            if self.ALPHA_ONLY:
                 if 65 <= ord(text[i]) <= 90:
-                    rep_letter = chr(((ord(text[i]) - ord(final_key[i]) + 26) % 26) + 65)
+                    rep_letter = matrix[j][0]
                 elif 97 <= ord(text[i]) <= 122:
-                    rep_letter = chr(((ord(text[i].upper()) - ord(final_key[i]) + 26) % 26) + 65).lower()
+                    rep_letter = matrix[j][0]
+                    rep_letter = rep_letter.lower()
                 else:
                     rep_letter = text[i]
             else:
-                rep_letter = chr(((ord(text[i]) - 63 - ord(final_key[i])) % 128))
-            dec_text += rep_letter
+                rep_letter = matrix[j][0]
 
+            dec_text += rep_letter
         return dec_text
 
-if __name__ == '__main__':
-    cipher = CaesarCipher()
-    print(cipher.decode("Wklv#lv#p|#hqfrglqj#prgxoh1"))
+    def __generate_matrix(self):
+        if self.ALPHA_ONLY:
+            elements = np.array([chr(i) for i in range(65, 91)], dtype='<U1')
+            matrix = np.empty((26, 26), dtype='<U1')
+        else:
+            elements = np.array([chr(i) for i in range(128)], dtype='<U1')
+            matrix = np.empty((128, 128), dtype='<U1')
+
+        for i in range(len(elements)):
+            matrix[i] = np.roll(elements, -i)
+
+        return matrix

@@ -3,7 +3,7 @@ import unittest
 from encoding.utils import Pipeline, Salt, FileEncoder
 from encoding.text.transposition import RailFenceCipher, ColumnarTranspositionCipher
 from encoding.text.substitution import CaesarCipher, AtbashCipher, AffineCipher, VigenereCipher
-
+from tqdm import tqdm
 
 class TestPipeline(unittest.TestCase):
     def test_encode_without_salt(self):
