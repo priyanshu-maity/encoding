@@ -11,6 +11,7 @@ Classes:
 """
 
 import warnings
+import numpy as np
 
 from encoding.utils import TextEncoder
 
