@@ -12,7 +12,7 @@ Classes:
 
 import warnings
 
-from utils import TextEncoder
+from encoding.utils import TextEncoder
 
 
 class CaesarCipher(metaclass=TextEncoder):
@@ -493,3 +493,7 @@ class VigenereCipher(metaclass=TextEncoder):
             dec_text += rep_letter
 
         return dec_text
+
+if __name__ == '__main__':
+    cipher = CaesarCipher()
+    print(cipher.decode("Wklv#lv#p|#hqfrglqj#prgxoh1"))

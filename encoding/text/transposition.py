@@ -12,7 +12,7 @@ import numpy as np
 import math
 import warnings
 
-from utils import TextEncoder
+from encoding.utils import TextEncoder
 
 
 class RailFenceCipher(metaclass=TextEncoder):
