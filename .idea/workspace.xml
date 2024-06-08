@@ -33,16 +33,16 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python tests.Python tests in test_utils.py.executor": "Run",
-    "Python.substitution.executor": "Run",
-    "Python.test_utils.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "D:/Priyanshu Maity/Python/PROJECTS/encoding_package"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python tests.Python tests in test_utils.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python.substitution.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test_utils.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/abhin/OneDrive/All Files/Python/My Projects/Encoding_Temp_2/encoding&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="test_utils" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="encoding_package" />
