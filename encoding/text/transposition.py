@@ -66,8 +66,8 @@ class RailFenceCipher(metaclass=TextEncoder):
             ValueError: If any character in the input text has ASCII value greater than 127.
         """
 
-        if any(ord(char) > 127 for char in text):
-            raise ValueError("Text Encoders cannot handle characters with ASCII > 127")
+        if not any(32 <= ord(char) <= 126 for char in text):
+            raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
         self.rf_arr = np.zeros((self.key, len(text)), dtype='str')
         enc_text = ''
 
@@ -93,8 +93,8 @@ class RailFenceCipher(metaclass=TextEncoder):
             ValueError: If any character in the input text has ASCII value greater than 127.
         """
 
-        if any(ord(char) > 127 for char in text):
-            raise ValueError("Text Encoders cannot handle characters with ASCII > 127")
+        if not any(32 <= ord(char) <= 126 for char in text):
+            raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
 
         self.rf_arr = np.zeros((self.key, len(text)), dtype='str')
         text_index = 0
@@ -217,8 +217,8 @@ class ColumnarTranspositionCipher(metaclass=TextEncoder):
             Warning: If the filler character is present in the input text.
         """
 
-        if any(ord(char) > 127 for char in text):
-            raise ValueError("Text Encoders cannot handle characters with ASCII > 127")
+        if not any(32 <= ord(char) <= 126 for char in text):
+            raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
 
         if self.filler in text:
             warnings.warn(f"Filler '{self.filler}' is present in the text which might lead to unwanted issues.")
@@ -256,8 +256,8 @@ class ColumnarTranspositionCipher(metaclass=TextEncoder):
             ValueError: If any character in the input text has ASCII value greater than 127.
         """
 
-        if any(ord(char) > 127 for char in text):
-            raise ValueError("Text Encoders cannot handle characters with ASCII > 127")
+        if not any(32 <= ord(char) <= 126 for char in text):
+            raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
 
         rows = len(text)//len(self.key)
         self.txt_arr = np.zeros((rows, len(self.key)), dtype='str')
