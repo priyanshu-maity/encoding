@@ -389,7 +389,41 @@ class AffineCipher(metaclass=TextEncoder):
 
 
 class VigenereCipher(metaclass=TextEncoder):
+    """
+        VigenereCipher class for encoding and decoding text using the Vigenère Cipher technique.
+
+        Attributes:
+            key (str): The key for the Vigenère Cipher Swap (default: 'KEY').
+            alpha_only (bool) : Flag to determine if the cipher should only handle alphabetic characters (default: False).
+
+        Methods:
+            __init__(self, key: str = 'KEY', alpha_only: bool = False):
+                Initializes the VigenereCipher object with the specified keys and mode.
+            encode(self, text: str) -> str:
+                Encodes the input text using the Vigenère Cipher.
+            decode(self, text: str) -> str:
+                Decodes the input text using the Vigenère Cipher.
+
+        Private Methods:
+            __generate_matrix(self)
+                Private method to generate a Vigenère square matrix for alphabet-only encoding and decoding.
+        """
     def __init__(self, key: str = 'KEY', alpha_only: bool = False):
+        """
+            Initializes the VigenereCipher object with the specified key and mode.
+
+            Parameters:
+                key (str): The key for the Vigenère Cipher (default: 'KEY').
+                alpha_only (bool): Flag to determine if the cipher should only handle alphabetic characters (default: False).
+
+            Raises:
+                ValueError: If the key is an empty string.
+
+            Warns:
+                UserWarning: If alpha_only is set to True, a warning is issued indicating that the cipher is in
+                    Alphabet only mode.
+        """
+
         self.key = key
         self.alpha_only = alpha_only
         self.final_key = ""
@@ -402,8 +436,22 @@ class VigenereCipher(metaclass=TextEncoder):
             raise ValueError("Key value cannot be null")
 
     def encode(self, text: str) -> str:
-        if any(ord(char) > 127 or ord(char) in [8, 9, 10, 12, 13] for char in text):
-            raise ValueError("Text Encoders cannot handle characters with ASCII > 127 or escape sequences")
+        """
+            Encodes the input text using the Vigenère Cipher.
+
+            Parameters:
+                text (str): The text to be encoded.
+
+            Returns:
+                str: The encoded text.
+
+            Raises:
+                ValueError: If the text contains characters with ASCII < 32 or ASCII > 126.
+                ValueError: If the key contains non-alphabetic characters in alpha_only mode.
+        """
+
+        if not any(32 <= ord(char) <= 126 for char in text):
+            raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
 
         self.final_key = (self.key * (len(text) // len(self.key) + 1)).upper()
         enc_text = ""
@@ -428,8 +476,22 @@ class VigenereCipher(metaclass=TextEncoder):
         return enc_text
 
     def decode(self, text: str) -> str:
-        if any(ord(char) > 127 or ord(char) in [8,9,10,12,13] for char in text):
-            raise ValueError("Text Encoders cannot handle characters with ASCII > 127 or escape sequences")
+        """
+            Decodes the input text using the Vigenère Cipher.
+
+            Parameters:
+                text (str): The text to be decoded.
+
+            Returns:
+                str: The decoded text.
+
+            Raises:
+                ValueError: If the text contains characters with ASCII < 32 or ASCII > 126.
+                ValueError: If the key contains non-alphabetic characters in alpha_only mode.
+        """
+
+        if not any(32 <= ord(char) <= 126 for char in text):
+            raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
 
         self.final_key = (self.key * (len(text) // len(self.key) + 1)).upper()
         dec_text = ""
@@ -456,13 +518,19 @@ class VigenereCipher(metaclass=TextEncoder):
                 else:
                     rep_letter = text[i]
             else:
-                rep_letter = chr((((ord(text[i]) - 32) - (ord(self.final_key[i])- 32)) % 95) + 32)
-
+                rep_letter = chr((((ord(text[i]) - 32) - (ord(self.final_key[i]) - 32)) % 95) + 32)
 
             dec_text += rep_letter
         return dec_text
 
     def __generate_matrix(self):
+        """
+            Generates a Vigenère square matrix for alphabet-only encoding and decoding.
+
+            Returns:
+                np.ndarray: A 26x26 matrix used for the Vigenère Cipher.
+        """
+
         elements = np.array([chr(i) for i in range(65, 91)], dtype='<U1')
         matrix = np.empty((26, 26), dtype='<U1')
 
@@ -470,5 +538,3 @@ class VigenereCipher(metaclass=TextEncoder):
             matrix[i] = np.roll(elements, -i)
 
         return matrix
-
-
