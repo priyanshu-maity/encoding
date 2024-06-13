@@ -7,7 +7,7 @@ Classes:
     TextEncoder -- A metaclass ensuring encoders implement 'encode' and 'decode' methods.
     Pipeline -- A class for combining multiple encoders in sequence.
     Salt -- A class for adding and removing salt from text to enhance security.
-    FileEncoder -- A class for encoding and decoding text files using a specified encoder.
+    TextFileEncoder -- A class for encoding and decoding text files using a specified encoder.
 """
 
 import inspect
@@ -324,7 +324,7 @@ class Salt:
         return ''.join(random.choices(self.characters, k=random.randint(self.min_length, self.max_length)))
 
 
-class FileEncoder:
+class TextFileEncoder:
     """
     A class for encoding and decoding text files using a specified encoder.
 
@@ -358,9 +358,15 @@ class FileEncoder:
             - file_out (str): The path to the output text file where the encoded text will be written
               (default: None, which overwrites the input file).
             - progressbar (bool): Whether to display a progress bar during encoding (default: False).
+
+        Raises:
+            - ValueError: If the files are not text files.
         """
 
         enc_text = ''
+
+        if file[file.rindex('.') + 1:] != 'txt' or file_out[file_out.rindex('.') + 1:] != 'txt':
+            raise ValueError("TextFileEncoder only supports text files with extension: '.txt'")
 
         with open(file, 'r') as f:
             if progressbar:
@@ -388,9 +394,15 @@ class FileEncoder:
             - file_out (str): The path to the output text file where the decoded text will be written
               (default: None, which overwrites the input file).
             - progressbar (bool): Whether to display a progress bar during decoding (default: False).
+
+        Raises:
+            - ValueError: If the files are not text files.
         """
 
         dec_text = ''
+
+        if file[file.rindex('.') + 1:] != 'txt' or file_out[file_out.rindex('.') + 1:] != 'txt':
+            raise ValueError("TextFileEncoder only supports text files with extension: '.txt'")
 
         with open(file, 'r') as f:
             if progressbar:
