@@ -5,15 +5,9 @@ import numpy as np
 
 
 class CaesarCipher(metaclass=TextEncoder):
-    def __init__(self, key: int = 3, alpha_only: bool = False):
-        self.key = key
+    def __init__(self, shift: int = 3, alpha_only: bool = False):
+        self.shift = shift
         self.alpha_only = alpha_only
-
-        if self.alpha_only:
-            warnings.warn(
-                message="Caesar Cipher is in Alphabet only mode. To change it, set 'alpha_only' to False",
-                category=UserWarning
-            )
 
     def encode(self, text: str) -> str:
         if not any(32 <= ord(char) <= 126 for char in text):
@@ -23,7 +17,7 @@ class CaesarCipher(metaclass=TextEncoder):
         for i in text:
             ascii_val = ord(i)
             if self.alpha_only:
-                char_value = ascii_val + self.key
+                char_value = ascii_val + self.shift
                 if 65 <= ascii_val <= 90:
                     rep_letter = chr(char_value) if char_value <= 90 else chr(char_value - 26)
                 elif 97 <= ascii_val <= 122:
@@ -31,7 +25,7 @@ class CaesarCipher(metaclass=TextEncoder):
                 else:
                     rep_letter = i
             else:
-                rep_letter = chr(((ascii_val - 32 + self.key) % 95) + 32)
+                rep_letter = chr(((ascii_val - 32 + self.shift) % 95) + 32)
             enc_text += rep_letter
 
         return enc_text
@@ -44,7 +38,7 @@ class CaesarCipher(metaclass=TextEncoder):
         for i in text:
             ascii_val = ord(i)
             if self.alpha_only:
-                char_val = ascii_val - self.key
+                char_val = ascii_val - self.shift
                 if 65 <= ascii_val <= 90:
                     rep_letter = chr(char_val) if char_val >= 65 else chr(char_val + 26)
                 elif 97 <= ascii_val <= 122:
@@ -52,21 +46,15 @@ class CaesarCipher(metaclass=TextEncoder):
                 else:
                     rep_letter = i
             else:
-                rep_letter = chr(((ascii_val - 32 - self.key) % 95) + 32)
+                rep_letter = chr(((ascii_val - 32 - self.shift) % 95) + 32)
             dec_text += rep_letter
 
         return dec_text
 
 
-
 class AtbashCipher(metaclass=TextEncoder):
     def __init__(self, alpha_only: bool = False):
         self.alpha_only = alpha_only
-        if self.alpha_only:
-            warnings.warn(
-                message="Atbash Cipher is in Alphabet only mode. To change it, set 'alpha_only' to False",
-                category=UserWarning
-            )
 
     def encode(self, text: str) -> str:
         if not any(32 <= ord(char) <= 126 for char in text):

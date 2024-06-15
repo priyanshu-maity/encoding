@@ -25,7 +25,7 @@ data_tuple = (
 encoder = StructuredDataEncoder(encoder=pipeline)
 
 enc_list = encoder.encode(data_tuple)
-print("Encoded List:", enc_list)
+print("Encoded List:", enc_list, end="\n\n")
 
 dec_list = encoder.decode(enc_list)
 print("Decoded List:", dec_list)

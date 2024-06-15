@@ -16,17 +16,17 @@ from encoding.utils import TextEncoder
 
 
 class RailFenceCipher(metaclass=TextEncoder):
-    def __init__(self, key: int = 3):
-        self.key = key
+    def __init__(self, rails: int = 3):
+        self.rails = rails
         self.rf_arr = None
 
-        if self.key < 2:
+        if self.rails < 2:
             raise ValueError("The key in Rail Fence Cipher cannot be less than 2")
 
     def encode(self, text: str) -> str:
         if not any(32 <= ord(char) <= 126 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
-        self.rf_arr = np.zeros((self.key, len(text)), dtype='str')
+        self.rf_arr = np.zeros((self.rails, len(text)), dtype='str')
         enc_text = ''
 
         self.__zig_zag(mode='fill', text=text)
@@ -41,7 +41,7 @@ class RailFenceCipher(metaclass=TextEncoder):
         if not any(32 <= ord(char) <= 126 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
 
-        self.rf_arr = np.zeros((self.key, len(text)), dtype='str')
+        self.rf_arr = np.zeros((self.rails, len(text)), dtype='str')
         text_index = 0
 
         self.__zig_zag(mode='fill', text='*' * len(text))
@@ -61,7 +61,7 @@ class RailFenceCipher(metaclass=TextEncoder):
         i_increasing = True
 
         while True:
-            if i == self.key - 1:
+            if i == self.rails - 1:
                 i_increasing = False
             elif i == 0:
                 i_increasing = True

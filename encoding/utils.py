@@ -201,15 +201,6 @@ class TextFileEncoder:
             f.write(dec_text)
 
 
-def get_str(obj: object) -> str:
-    if isinstance(obj, (int, float, complex, bool, type(None), range, bytes, bytearray)):
-        return str(obj)
-    elif isinstance(obj, str):
-        return f'str(\'{obj}\')'
-    else:
-        raise ValueError(f"Data type '{obj}' is not supported.")
-
-
 class StructuredDataEncoder:
     def __init__(self, encoder: object):
         self.encoder = encoder
@@ -226,7 +217,7 @@ class StructuredDataEncoder:
         elif isinstance(data, frozenset):
             return self.__frozen_set_encoder(data, mode='encode')
         else:
-            return self.encoder.encode(get_str(data))
+            return self.encoder.encode(self.__get_str(data))
 
     def decode(self, data: object) -> object:
         if isinstance(data, list):
@@ -279,3 +270,11 @@ class StructuredDataEncoder:
 
     def __frozen_set_encoder(self, data: frozenset, mode: str = 'encode') -> frozenset:
         return frozenset(self.__set_encoder(set(data), mode=mode))
+
+    def __get_str(self, obj: object) -> str:
+        if isinstance(obj, (int, float, complex, bool, type(None), range, bytes, bytearray)):
+            return str(obj)
+        elif isinstance(obj, str):
+            return f'str(\'{obj}\')'
+        else:
+            raise ValueError(f"Data type '{obj}' is not supported.")
