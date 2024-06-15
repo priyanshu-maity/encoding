@@ -1,15 +1,3 @@
-"""
-text.substitution.py
-
-This module provides substitution cipher classes for text encoding and decoding operations.
-
-Classes:
-    CaesarCipher -- A class for encoding and decoding text using the Caesar Cipher technique.
-    AtbashCipher -- A class for encoding and decoding text using the Atbash Cipher technique.
-    AffineCipher -- A class for encoding and decoding text using the Affine Cipher technique.
-    VigenereCipher -- A class for encoding and decoding text using the Vigenere Cipher technique.
-"""
-
 import warnings
 
 from encoding.utils import TextEncoder
@@ -17,37 +5,8 @@ import numpy as np
 
 
 class CaesarCipher(metaclass=TextEncoder):
-    """
-    CaesarCipher class for encoding and decoding text using the Caesar Cipher technique.
-
-    Attributes:
-        - key (int): The key for the Caesar Cipher shift (default: 3).
-        - alpha_only (bool): Flag to indicate if the cipher should only shift alphabetic characters (default: False).
-
-    Methods:
-        - __init__(self, key: int = 3, alpha_only: bool = False):
-            Initializes the CaesarCipher object with the specified key and mode.
-        - encode(self, text: str) -> str:
-            Encodes the input text using the Caesar Cipher.
-        - decode(self, text: str) -> str:
-            Decodes the input text using the Caesar Cipher.
-    """
-
     def __init__(self, key: int = 3, alpha_only: bool = False):
-        """
-        Initializes the CaesarCipher object with the specified key and mode.
-
-        Parameters:
-            - key (int, optional): The key for the Caesar Cipher shift (default: 3).
-            - alpha_only (bool, optional): Flag to indicate if the cipher should only shift alphabetic characters (default: False).
-
-        Warns:
-            UserWarning: If alpha_only is set to True, a warning is issued indicating that the cipher is in
-                Alphabet only mode.
-        """
-
         self.key = key
-        self.__is_key_default = True
         self.alpha_only = alpha_only
 
         if self.alpha_only:
@@ -57,28 +16,14 @@ class CaesarCipher(metaclass=TextEncoder):
             )
 
     def encode(self, text: str) -> str:
-        """
-        Encodes the input text using the Caesar Cipher.
-
-        Parameters:
-            - text (str): The input text to be encoded.
-
-        Returns:
-            - str: The encoded text.
-
-        Raises:
-            - ValueError: If the input text contains characters with ASCII > 127.
-        """
-
         if not any(32 <= ord(char) <= 126 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
         enc_text = ""
 
         for i in text:
             ascii_val = ord(i)
-
             if self.alpha_only:
-                char_value = (ascii_val + self.key)
+                char_value = ascii_val + self.key
                 if 65 <= ascii_val <= 90:
                     rep_letter = chr(char_value) if char_value <= 90 else chr(char_value - 26)
                 elif 97 <= ascii_val <= 122:
@@ -89,30 +34,16 @@ class CaesarCipher(metaclass=TextEncoder):
                 rep_letter = chr(((ascii_val - 32 + self.key) % 95) + 32)
             enc_text += rep_letter
 
-
         return enc_text
 
     def decode(self, text: str) -> str:
-        """
-        Decodes the input text using the Caesar Cipher.
-
-        Parameters:
-            - text (str): The input text to be decoded.
-
-        Returns:
-            - str: The decoded text.
-
-        Raises:
-            - ValueError: If the input text contains characters with ASCII > 127.
-        """
-
         if not any(32 <= ord(char) <= 126 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
 
-        if self.alpha_only:
-            dec_text = ""
-            for i in text:
-                ascii_val = ord(i)
+        dec_text = ""
+        for i in text:
+            ascii_val = ord(i)
+            if self.alpha_only:
                 char_val = ascii_val - self.key
                 if 65 <= ascii_val <= 90:
                     rep_letter = chr(char_val) if char_val >= 65 else chr(char_val + 26)
@@ -120,42 +51,16 @@ class CaesarCipher(metaclass=TextEncoder):
                     rep_letter = chr(char_val) if char_val >= 97 else chr(char_val + 26)
                 else:
                     rep_letter = i
-                dec_text += rep_letter
-            return dec_text
-        else:
-            self.key *= -1
-            self.__is_key_default = not self.__is_key_default
-            return self.encode(text=text)
+            else:
+                rep_letter = chr(((ascii_val - 32 - self.key) % 95) + 32)
+            dec_text += rep_letter
+
+        return dec_text
+
 
 
 class AtbashCipher(metaclass=TextEncoder):
-    """
-    AtbashCipher class for encoding and decoding text using the Atbash Cipher technique.
-
-    Attributes:
-        - alpha_only (bool): Flag to indicate if the cipher should only shift alphabetic characters (default: False).
-
-    Methods:
-        - __init__(self, alpha_only: bool = False):
-            Initializes the AtbashCipher object with the specified mode.
-        - encode(self, text: str) -> str:
-            Encodes the input text using the Atbash Cipher.
-        - decode(self, text: str) -> str:
-            Decodes the input text using the Atbash Cipher.
-    """
-
     def __init__(self, alpha_only: bool = False):
-        """
-        Initializes the AtbashCipher object with the specified mode.
-
-        Parameters:
-            - alpha_only (bool, optional): Flag to indicate if the cipher should only shift alphabetic characters (default: False).
-
-        Warns:
-            UserWarning: If alpha_only is set to True, a warning is issued indicating that the cipher is in
-                Alphabet only mode.
-        """
-
         self.alpha_only = alpha_only
         if self.alpha_only:
             warnings.warn(
@@ -164,19 +69,6 @@ class AtbashCipher(metaclass=TextEncoder):
             )
 
     def encode(self, text: str) -> str:
-        """
-        Encodes the input text using the Atbash Cipher.
-
-        Parameters:
-            - text (str): The input text to be encoded.
-
-        Returns:
-            - str: The encoded text.
-
-        Raises:
-            - ValueError: If the input text contains characters with ASCII > 127.
-        """
-
         if not any(32 <= ord(char) <= 126 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
 
@@ -198,18 +90,6 @@ class AtbashCipher(metaclass=TextEncoder):
         return enc_text
 
     def decode(self, text: str) -> str:
-        """
-        Decodes the input text using the Atbash Cipher.
-
-        Parameters:
-            - text (str): The input text to be decoded.
-
-        Returns:
-            - str: The decoded text.
-
-        Raises:
-            - ValueError: If the input text contains characters with ASCII > 127.
-        """
         if not any(32 <= ord(char) <= 126 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
 
@@ -217,47 +97,7 @@ class AtbashCipher(metaclass=TextEncoder):
 
 
 class AffineCipher(metaclass=TextEncoder):
-    """
-    AffineCipher class for encoding and decoding text using the Affine Cipher technique.
-
-    Attributes:
-        key_a (int): The multiplicative key for the Affine Cipher (default: 1).
-        key_b (int): The additive key for the Affine Cipher (default: 3).
-        alpha_only (bool): Flag to indicate if the cipher should only shift alphabetic characters (default: False).
-
-    Methods:
-        __init__(self, key_a: int = 1, key_b: int = 3, alpha_only: bool = False):
-            Initializes the AffineCipher object with the specified keys and mode.
-        encode(self, text: str) -> str:
-            Encodes the input text using the Affine Cipher.
-        decode(self, text: str) -> str:
-            Decodes the input text using the Affine Cipher.
-
-    Private Methods:
-        __mod_inverse(self, m):
-            Private method to calculate the modular inverse of a number.
-        __coprime(self) -> bool:
-            Private method to check if key_a is coprime with 26 (if alpha_only) or 128.
-    """
-
     def __init__(self, key_a: int = 3, key_b: int = 3, alpha_only: bool = False):
-        """
-        Initializes the AffineCipher object with the specified keys and mode.
-
-        Parameters:
-            key_a (int, optional): The multiplicative key for the Affine Cipher (default: 3).
-            key_b (int, optional): The additive key for the Affine Cipher (default: 3).
-            alpha_only (bool, optional): Flag to indicate if the cipher should only shift alphabetic characters
-                (default: False).
-
-        Raises:
-            ValueError: If key_a is not within the specified range or not coprime with 26 (if alpha_only) or 128.
-
-        Warns:
-            UserWarning: If alpha_only is set to True, a warning is issued indicating that the cipher is in
-                Alphabet only mode.
-        """
-
         self.key_a = key_a
         self.key_b = key_b
         self.alpha_only = alpha_only
@@ -281,19 +121,6 @@ class AffineCipher(metaclass=TextEncoder):
                              "26" if self.alpha_only else "128")
 
     def encode(self, text: str) -> str:
-        """
-        Encodes the input text using the Affine Cipher.
-
-        Parameters:
-            text (str): The text to be encoded.
-
-        Returns:
-            str: The encoded text.
-
-        Raises:
-            ValueError: If any character in the input text has ASCII value greater than 127.
-        """
-
         if not any(32 <= ord(char) <= 126 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
 
@@ -318,19 +145,6 @@ class AffineCipher(metaclass=TextEncoder):
         return enc_text
 
     def decode(self, text: str) -> str:
-        """
-        Decodes the input text using the Affine Cipher.
-
-        Parameters:
-            text (str): The text to be decoded.
-
-        Returns:
-            str: The decoded text.
-
-        Raises:
-            ValueError: If any character in the input text has ASCII value greater than 127.
-        """
-
         if not any(32 <= ord(char) <= 126 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
         dec_text = ""
@@ -358,28 +172,12 @@ class AffineCipher(metaclass=TextEncoder):
         return dec_text
 
     def __mod_inverse(self, m):
-        """
-        Private method to calculate the modular inverse of a number.
-
-        Parameters:
-            m: The number for which the modular inverse is to be calculated.
-
-        Returns:
-            int or None: The modular inverse if found, None otherwise.
-        """
-
         for i in range(1, m):
             if (self.key_a * i) % m == 1:
                 return i
         return None
 
     def __coprime(self) -> bool:
-        """
-        Private method to check if key_a is coprime with 26 (if alpha_only) or 95.
-
-        Returns:
-            bool: True if key_a is coprime with the specified range, False otherwise.
-        """
 
         a = self.key_a
         b = 26 if self.alpha_only else 95
@@ -389,41 +187,7 @@ class AffineCipher(metaclass=TextEncoder):
 
 
 class VigenereCipher(metaclass=TextEncoder):
-    """
-        VigenereCipher class for encoding and decoding text using the Vigenère Cipher technique.
-
-        Attributes:
-            key (str): The key for the Vigenère Cipher Swap (default: 'KEY').
-            alpha_only (bool) : Flag to determine if the cipher should only handle alphabetic characters (default: False).
-
-        Methods:
-            __init__(self, key: str = 'KEY', alpha_only: bool = False):
-                Initializes the VigenereCipher object with the specified keys and mode.
-            encode(self, text: str) -> str:
-                Encodes the input text using the Vigenère Cipher.
-            decode(self, text: str) -> str:
-                Decodes the input text using the Vigenère Cipher.
-
-        Private Methods:
-            __generate_matrix(self)
-                Private method to generate a Vigenère square matrix for alphabet-only encoding and decoding.
-        """
     def __init__(self, key: str = 'KEY', alpha_only: bool = False):
-        """
-            Initializes the VigenereCipher object with the specified key and mode.
-
-            Parameters:
-                key (str): The key for the Vigenère Cipher (default: 'KEY').
-                alpha_only (bool): Flag to determine if the cipher should only handle alphabetic characters (default: False).
-
-            Raises:
-                ValueError: If the key is an empty string.
-
-            Warns:
-                UserWarning: If alpha_only is set to True, a warning is issued indicating that the cipher is in
-                    Alphabet only mode.
-        """
-
         self.key = key
         self.alpha_only = alpha_only
         self.final_key = ""
@@ -436,20 +200,6 @@ class VigenereCipher(metaclass=TextEncoder):
             raise ValueError("Key value cannot be null")
 
     def encode(self, text: str) -> str:
-        """
-            Encodes the input text using the Vigenère Cipher.
-
-            Parameters:
-                text (str): The text to be encoded.
-
-            Returns:
-                str: The encoded text.
-
-            Raises:
-                ValueError: If the text contains characters with ASCII < 32 or ASCII > 126.
-                ValueError: If the key contains non-alphabetic characters in alpha_only mode.
-        """
-
         if not any(32 <= ord(char) <= 126 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
 
@@ -476,20 +226,6 @@ class VigenereCipher(metaclass=TextEncoder):
         return enc_text
 
     def decode(self, text: str) -> str:
-        """
-            Decodes the input text using the Vigenère Cipher.
-
-            Parameters:
-                text (str): The text to be decoded.
-
-            Returns:
-                str: The decoded text.
-
-            Raises:
-                ValueError: If the text contains characters with ASCII < 32 or ASCII > 126.
-                ValueError: If the key contains non-alphabetic characters in alpha_only mode.
-        """
-
         if not any(32 <= ord(char) <= 126 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
 
@@ -524,13 +260,6 @@ class VigenereCipher(metaclass=TextEncoder):
         return dec_text
 
     def __generate_matrix(self):
-        """
-            Generates a Vigenère square matrix for alphabet-only encoding and decoding.
-
-            Returns:
-                np.ndarray: A 26x26 matrix used for the Vigenère Cipher.
-        """
-
         elements = np.array([chr(i) for i in range(65, 91)], dtype='<U1')
         matrix = np.empty((26, 26), dtype='<U1')
 
@@ -538,3 +267,8 @@ class VigenereCipher(metaclass=TextEncoder):
             matrix[i] = np.roll(elements, -i)
 
         return matrix
+
+
+if __name__ == '__main__':
+    cipher = VigenereCipher()
+    print(cipher.decode('Khoor#Zruog'))
