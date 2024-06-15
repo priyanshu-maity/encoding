@@ -12,6 +12,8 @@ Classes:
 
 import inspect
 import random
+import json
+import csv
 
 from tqdm import tqdm
 
@@ -101,7 +103,7 @@ class Salt:
     def __init__(self, position: str = 'between', random_seed: int = 42, min_length: int = 2, max_length: int = 7):
         random.seed(random_seed)
         self.random_state = random.getstate()
-        self.characters = [chr(i) for i in range(33, 127)]
+        self.characters = [chr(i) for i in range(33, 127) if chr(i) not in ['-', '\'', '\"']]
         self.min_length = min_length
         self.max_length = max_length
         self.positions = ['front', 'end', 'between']
@@ -147,58 +149,6 @@ class Salt:
 
     def __get_salt(self) -> str:
         return ''.join(random.choices(self.characters, k=random.randint(self.min_length, self.max_length)))
-
-
-class TextFileEncoder:
-    def __init__(self, encoder: object):
-        self.encoder = encoder
-
-    def encode(self, file: str, file_out: str = None, progressbar: bool = False) -> None:
-
-        enc_text = ''
-
-        if file[file.rindex('.') + 1:] != 'txt' or file_out[file_out.rindex('.') + 1:] != 'txt':
-            raise ValueError("TextFileEncoder only supports text files with extension: '.txt'")
-
-        with open(file, 'r') as f:
-            if progressbar:
-                bar = tqdm(desc="Encoding", total=len(f.readlines()), unit=" lines")
-                f.seek(0)
-
-            for line in f:
-                line = line.strip()
-                enc_text += self.encoder.encode(line) + '\n'
-                if progressbar:
-                    bar.update(1)
-
-            if progressbar:
-                bar.close()
-
-        with open(file_out if file_out else file, 'w') as f:
-            f.write(enc_text)
-
-    def decode(self, file: str, file_out: str = None, progressbar: bool = False) -> None:
-        dec_text = ''
-
-        if file[file.rindex('.') + 1:] != 'txt' or file_out[file_out.rindex('.') + 1:] != 'txt':
-            raise ValueError("TextFileEncoder only supports text files with extension: '.txt'")
-
-        with open(file, 'r') as f:
-            if progressbar:
-                bar = tqdm(desc="Decoding", total=len(f.readlines()), unit=" lines")
-                f.seek(0)
-
-            for line in f:
-                line = line.strip()
-                dec_text += self.encoder.decode(line) + '\n'
-                if progressbar:
-                    bar.update(1)
-
-            if progressbar:
-                bar.close()
-
-        with open(file_out if file_out else file, 'w') as f:
-            f.write(dec_text)
 
 
 class StructuredDataEncoder:
@@ -278,3 +228,59 @@ class StructuredDataEncoder:
             return f'str(\'{obj}\')'
         else:
             raise ValueError(f"Data type '{obj}' is not supported.")
+
+
+class TextFileEncoder:
+    def __init__(self, encoder: object):
+        self.encoder = encoder
+
+    def encode(self, file: str, file_out: str = None) -> None:
+        if file[file.rindex('.') + 1:] != 'txt' or (file_out[file_out.rindex('.') + 1:] != 'txt' if file_out else False):
+            raise ValueError("TextFileEncoder only supports text files with extension: '.txt'")
+
+        enc_text = ''
+        with open(file, 'r') as f:
+            for line in f:
+                line = line.strip()
+                enc_text += self.encoder.encode(line) + '\n'
+
+        with open(file_out if file_out else file, 'w') as f:
+            f.write(enc_text)
+
+    def decode(self, file: str, file_out: str = None) -> None:
+        if file[file.rindex('.') + 1:] != 'txt' or (file_out[file_out.rindex('.') + 1:] != 'txt' if file_out else False):
+            raise ValueError("TextFileEncoder only supports text files with extension: '.txt'")
+
+        dec_text = ''
+        with open(file, 'r') as f:
+            for line in f:
+                line = line.strip()
+                dec_text += self.encoder.decode(line) + '\n'
+
+        with open(file_out if file_out else file, 'w') as f:
+            f.write(dec_text)
+
+
+class JSONFileEncoder:
+    def __init__(self, encoder: object):
+        self.encoder = StructuredDataEncoder(encoder=encoder)
+
+    def encode(self, file: str, file_out: str = None, indent: int = 4) -> None:
+        if file[file.rindex('.') + 1:] != 'json' or (file_out[file_out.rindex('.') + 1:] != 'json' if file_out else False):
+            raise ValueError("TextFileEncoder only supports text files with extension: '.json'")
+
+        data = json.load(open(file, 'r'))
+        enc_data = self.encoder.encode(data)
+
+        with open(file_out if file_out else file, 'w') as f:
+            json.dump(enc_data, f, indent=indent)
+
+    def decode(self, file: str, file_out: str = None, indent: int = 4) -> None:
+        if file[file.rindex('.') + 1:] != 'json' or (file_out[file_out.rindex('.') + 1:] != 'json' if file_out else False):
+            raise ValueError("TextFileEncoder only supports text files with extension: '.json'")
+
+        data = json.load(open(file, 'r'))
+        dec_data = self.encoder.decode(data)
+
+        with open(file_out if file_out else file, 'w') as f:
+            json.dump(dec_data, f, indent=indent)
