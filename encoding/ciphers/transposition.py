@@ -60,6 +60,9 @@ class RailFenceCipher(metaclass=TextEncoder):
         Raises:
             ValueError: If the text contains characters with ASCII < 32 or ASCII > 127.
         """
+        if not text:
+            return text
+
         if not any(32 <= ord(char) <= 126 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
         self.rf_arr = np.zeros((self.rails, len(text)), dtype='str')
@@ -86,6 +89,9 @@ class RailFenceCipher(metaclass=TextEncoder):
         Raises:
             ValueError: If the text contains characters with ASCII < 32 or ASCII > 127.
         """
+        if not text:
+            return text
+
         if not any(32 <= ord(char) <= 126 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
 
@@ -199,6 +205,9 @@ class ColumnarTranspositionCipher(metaclass=TextEncoder):
             ValueError: If the text contains characters with ASCII < 32 or ASCII > 127.
             warnings.warn: If the filler character is present in the text.
         """
+        if not text:
+            return text
+
         if not any(32 <= ord(char) <= 126 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
 
@@ -237,6 +246,9 @@ class ColumnarTranspositionCipher(metaclass=TextEncoder):
         Raises:
             ValueError: If the text contains characters with ASCII < 32 or ASCII > 127.
         """
+        if not text:
+            return text
+
         if not any(32 <= ord(char) <= 126 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
 

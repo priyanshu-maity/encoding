@@ -55,6 +55,9 @@ class CaesarCipher(metaclass=TextEncoder):
         Raises:
             ValueError: If the text contains characters with ASCII < 32 or ASCII > 127.
         """
+        if not text:
+            return text
+
         if not any(32 <= ord(char) <= 126 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
         enc_text = ""
@@ -88,6 +91,9 @@ class CaesarCipher(metaclass=TextEncoder):
         Raises:
             ValueError: If the text contains characters with ASCII < 32 or ASCII > 127.
         """
+        if not text:
+            return text
+
         if not any(32 <= ord(char) <= 126 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
 
@@ -143,6 +149,9 @@ class AtbashCipher(metaclass=TextEncoder):
         Raises:
             ValueError: If the text contains characters with ASCII < 32 or ASCII > 127.
         """
+        if not text:
+            return text
+
         if not any(32 <= ord(char) <= 126 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
 
@@ -176,6 +185,9 @@ class AtbashCipher(metaclass=TextEncoder):
         Raises:
             ValueError: If the text contains characters with ASCII < 32 or ASCII > 127.
         """
+        if not text:
+            return text
+
         if not any(32 <= ord(char) <= 126 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
 
@@ -243,6 +255,9 @@ class AffineCipher(metaclass=TextEncoder):
         Raises:
             ValueError: If the text contains characters with ASCII < 32 or ASCII > 127.
         """
+        if not text:
+            return text
+
         if not any(32 <= ord(char) <= 126 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
 
@@ -279,6 +294,9 @@ class AffineCipher(metaclass=TextEncoder):
         Raises:
             ValueError: If the text contains characters with ASCII < 32 or ASCII > 127.
         """
+        if not text:
+            return text
+
         if not any(32 <= ord(char) <= 126 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
         dec_text = ""
@@ -383,6 +401,9 @@ class VigenereCipher(metaclass=TextEncoder):
         Raises:
             ValueError: If the text contains characters with ASCII < 32 or ASCII > 127.
         """
+        if not text:
+            return text
+
         if not any(32 <= ord(char) <= 126 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
 
@@ -421,6 +442,9 @@ class VigenereCipher(metaclass=TextEncoder):
         Raises:
             ValueError: If the text contains characters with ASCII < 32 or ASCII > 127.
         """
+        if not text:
+            return text
+
         if not any(32 <= ord(char) <= 126 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
 
