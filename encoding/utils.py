@@ -576,7 +576,7 @@ class JSONFileEncoder:
             ValueError: If the file extensions are not '.json'.
         """
         if file[file.rindex('.') + 1:] != 'json' or (file_out[file_out.rindex('.') + 1:] != 'json' if file_out else False):
-            raise ValueError("TextFileEncoder only supports text files with extension: '.json'")
+            raise ValueError("JSONFileEncoder only supports text files with extension: '.json'")
 
         data = json.load(open(file, 'r'))
         enc_data = self.encoder.encode(data)
@@ -597,7 +597,7 @@ class JSONFileEncoder:
             ValueError: If the file extensions are not '.json'.
         """
         if file[file.rindex('.') + 1:] != 'json' or (file_out[file_out.rindex('.') + 1:] != 'json' if file_out else False):
-            raise ValueError("TextFileEncoder only supports text files with extension: '.json'")
+            raise ValueError("JSONFileEncoder only supports text files with extension: '.json'")
 
         data = json.load(open(file, 'r'))
         dec_data = self.encoder.decode(data)
