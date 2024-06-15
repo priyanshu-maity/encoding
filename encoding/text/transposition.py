@@ -1,11 +1,14 @@
 """
-text.transposition.py
+transposition.py
 
-This module provides transposition cipher classes for text encoding and decoding operations.
+This module provides classes for implementing transposition ciphers, specifically the Rail Fence Cipher and the Columnar
+Transposition Cipher. These classes use the `TextEncoder` metaclass to enforce the implementation of encoding and decoding
+methods.
 
 Classes:
-    RailFenceCipher -- A class for encoding and decoding text using the Rail Fence Cipher technique.
-    ColumnarTranspositionCipher -- A class for encoding and decoding text using the Columnar Transposition Cipher technique.
+    RailFenceCipher: Implements the Rail Fence Cipher for encoding and decoding text.
+    ColumnarTranspositionCipher: Implements the Columnar Transposition Cipher for encoding and decoding text.
+
 """
 
 import numpy as np
@@ -16,7 +19,28 @@ from encoding.utils import TextEncoder
 
 
 class RailFenceCipher(metaclass=TextEncoder):
+    """
+    Implements the Rail Fence Cipher for encoding and decoding text.
+
+    Attributes:
+        rails (int): The number of rails to use in the cipher.
+        rf_arr (ndarray): The array used to store the zig-zag pattern of characters.
+
+    Methods:
+        encode(text): Encodes the given text using the Rail Fence Cipher.
+        decode(text): Decodes the given text using the Rail Fence Cipher.
+    """
+
     def __init__(self, rails: int = 3):
+        """
+        Initializes the RailFenceCipher with the specified number of rails.
+
+        Args:
+            rails (int): The number of rails to use in the cipher. Default is 3.
+
+        Raises:
+            ValueError: If the number of rails is less than 2.
+        """
         self.rails = rails
         self.rf_arr = None
 
@@ -24,6 +48,18 @@ class RailFenceCipher(metaclass=TextEncoder):
             raise ValueError("The key in Rail Fence Cipher cannot be less than 2")
 
     def encode(self, text: str) -> str:
+        """
+        Encodes the given text using the Rail Fence Cipher.
+
+        Args:
+            text (str): The text to be encoded.
+
+        Returns:
+            str: The encoded text.
+
+        Raises:
+            ValueError: If the text contains characters with ASCII < 32 or ASCII > 127.
+        """
         if not any(32 <= ord(char) <= 126 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
         self.rf_arr = np.zeros((self.rails, len(text)), dtype='str')
@@ -38,6 +74,18 @@ class RailFenceCipher(metaclass=TextEncoder):
         return enc_text
 
     def decode(self, text: str) -> str:
+        """
+        Decodes the given text using the Rail Fence Cipher.
+
+        Args:
+            text (str): The text to be decoded.
+
+        Returns:
+            str: The decoded text.
+
+        Raises:
+            ValueError: If the text contains characters with ASCII < 32 or ASCII > 127.
+        """
         if not any(32 <= ord(char) <= 126 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
 
@@ -57,6 +105,19 @@ class RailFenceCipher(metaclass=TextEncoder):
         return dec_text
 
     def __zig_zag(self, mode: str, text: str = ''):
+        """
+        Helper method to fill the zig-zag pattern in the rail fence array.
+
+        Args:
+            mode (str): The mode of operation ('fill' or 'get').
+            text (str): The text to fill in the zig-zag pattern.
+
+        Returns:
+            str: The text obtained from the zig-zag pattern if mode is 'get'.
+
+        Raises:
+            ValueError: If the mode is not 'fill' or 'get'.
+        """
         i = j = 0
         i_increasing = True
 
@@ -90,7 +151,31 @@ class RailFenceCipher(metaclass=TextEncoder):
 
 
 class ColumnarTranspositionCipher(metaclass=TextEncoder):
+    """
+    Implements the Columnar Transposition Cipher for encoding and decoding text.
+
+    Attributes:
+        key (str): The key to use for the cipher.
+        filler (str): The filler character to use for padding.
+        txt_arr (ndarray): The array used to store the characters in columnar order.
+        order_list (list): The order of columns based on the key.
+
+    Methods:
+        encode(text): Encodes the given text using the Columnar Transposition Cipher.
+        decode(text): Decodes the given text using the Columnar Transposition Cipher.
+    """
+
     def __init__(self, key: str = "key", filler: str = "_"):
+        """
+        Initializes the ColumnarTranspositionCipher with the specified key and filler.
+
+        Args:
+            key (str): The key to use for the cipher. Default is "key".
+            filler (str): The filler character to use for padding. Default is "_".
+
+        Raises:
+            ValueError: If the key is not unique.
+        """
         if self.__is_unique(key.upper()):
             self.key = key.upper()
             self.filler = filler
@@ -101,6 +186,19 @@ class ColumnarTranspositionCipher(metaclass=TextEncoder):
         self.order_list = self.__get_order_list(self.key)
 
     def encode(self, text: str) -> str:
+        """
+        Encodes the given text using the Columnar Transposition Cipher.
+
+        Args:
+            text (str): The text to be encoded.
+
+        Returns:
+            str: The encoded text.
+
+        Raises:
+            ValueError: If the text contains characters with ASCII < 32 or ASCII > 127.
+            warnings.warn: If the filler character is present in the text.
+        """
         if not any(32 <= ord(char) <= 126 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
 
@@ -127,6 +225,18 @@ class ColumnarTranspositionCipher(metaclass=TextEncoder):
         return enc_text
 
     def decode(self, text: str) -> str:
+        """
+        Decodes the given text using the Columnar Transposition Cipher.
+
+        Args:
+            text (str): The text to be decoded.
+
+        Returns:
+            str: The decoded text.
+
+        Raises:
+            ValueError: If the text contains characters with ASCII < 32 or ASCII > 127.
+        """
         if not any(32 <= ord(char) <= 126 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
 
@@ -142,12 +252,30 @@ class ColumnarTranspositionCipher(metaclass=TextEncoder):
         return dec_text
 
     def __is_unique(self, text) -> bool:
+        """
+        Checks if all characters in the given text are unique.
+
+        Args:
+            text (str): The text to check.
+
+        Returns:
+            bool: True if all characters are unique, False otherwise.
+        """
         for i in range(len(text) - 1):
             if text[i] in text[i+1:]:
                 return False
         return True
 
     def __get_order_list(self, text: str) -> list:
+        """
+        Generates the order list based on the key.
+
+        Args:
+            text (str): The key to generate the order list from.
+
+        Returns:
+            list: The order list based on the key.
+        """
         lst = [ord(i) for i in text]
         order = 0
         for i in range(65, 91):
