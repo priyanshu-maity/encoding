@@ -14,6 +14,8 @@ Classes:
 
 import warnings
 
+from scipy.stats._multivariate import invwishart_frozen
+
 from encoding.utils import TextEncoder
 import numpy as np
 
@@ -224,12 +226,6 @@ class AffineCipher(metaclass=TextEncoder):
         self.key_b = key_b
         self.alpha_only = alpha_only
 
-        if self.alpha_only:
-            warnings.warn(
-                message="Affine Cipher is in Alphabet only mode. To change it, set 'alpha_only' to False",
-                category=UserWarning
-            )
-
         if not 0 <= self.key_a <= 26 and self.alpha_only:
             raise ValueError(
                 f"'key_a' cannot have a value {self.key_a}. Value must be within the range: 0 <= 'key_a' <= 26.")
@@ -276,7 +272,9 @@ class AffineCipher(metaclass=TextEncoder):
                 else:
                     x = ascii_val
             m = 26 if self.alpha_only else 95
-            rep_letter = chr(((self.key_a * (x - 32) + self.key_b) % m) + (65 if self.alpha_only else 32))
+            rep_letter = chr(((self.key_a * (x - (0 if self.alpha_only else 32)) + self.key_b) % m) + (65 if self.alpha_only else 32))
+            if self.alpha_only:
+                rep_letter = rep_letter.lower() if chr(ascii_val).islower() else rep_letter.upper()
             enc_text += rep_letter
 
         return enc_text
@@ -318,7 +316,9 @@ class AffineCipher(metaclass=TextEncoder):
             key_inv = self.__mod_inverse(m)
             if not key_inv:
                 raise ValueError("Unexpected error occurred.")
-            rep_letter = chr((key_inv * (x - 32 - self.key_b) % m) + (65 if self.alpha_only else 32))
+            rep_letter = chr((key_inv * (x - (0 if self.alpha_only else 32) - self.key_b) % m) + (0 if self.alpha_only else 32))
+            if self.alpha_only:
+                rep_letter = chr((ord(rep_letter) + 65) if chr(ascii_val).isupper() else (ord(rep_letter) + 97))
             dec_text += rep_letter
 
         return dec_text
@@ -380,11 +380,7 @@ class VigenereCipher(metaclass=TextEncoder):
         self.key = key
         self.alpha_only = alpha_only
         self.final_key = ""
-        if self.alpha_only:
-            warnings.warn(
-                message="Vigenere Cipher is in Alphabet only mode. To change it, set 'alpha_only' to False",
-                category=UserWarning
-            )
+
         if self.key == "":
             raise ValueError("Key value cannot be null")
 
@@ -425,7 +421,7 @@ class VigenereCipher(metaclass=TextEncoder):
                 else:
                     raise ValueError("Key must be composed of alphabets in Alphabet Only mode")
             else:
-                rep_letter = chr((((ord(text[i]) - 32) + (ord(self.final_key[i])- 32)) % 95) + 32)
+                rep_letter = chr((((ord(text[i]) - 32) + (ord(self.final_key[i]) - 32)) % 95) + 32)
             enc_text += rep_letter
         return enc_text
 
@@ -492,3 +488,5 @@ class VigenereCipher(metaclass=TextEncoder):
             matrix[i] = np.roll(elements, -i)
 
         return matrix
+
+

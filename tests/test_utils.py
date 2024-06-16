@@ -6,6 +6,22 @@ from encoding.ciphers.substitution import CaesarCipher, AtbashCipher, AffineCiph
 from encoding.ciphers.transposition import RailFenceCipher, ColumnarTranspositionCipher
 
 
+global_pipeline = Pipeline([
+        (Salt(), 'salt'),
+        (RailFenceCipher(), 'rail_fence'),
+        (CaesarCipher(), 'caesar'),
+        (VigenereCipher(), 'vigenere')
+    ])
+
+sample_strings = [
+    "Hello, World!",
+    '12345',
+    'Random Characters: !@#$%^&*()_+-=',
+    "I'm learning Python.",
+    ""
+]
+
+
 class TestPipeline(unittest.TestCase):
     def test_encode_without_salt(self):
         pipeline = Pipeline([
@@ -181,19 +197,6 @@ class TestJFE(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    global_pipeline = Pipeline([
-        (Salt(), 'salt'),
-        (RailFenceCipher(), 'rail_fence'),
-        (CaesarCipher(), 'caesar'),
-        (VigenereCipher(), 'vigenere')
-    ])
 
-    sample_strings = [
-        "Hello, World!",
-        '12345',
-        'Random Characters: !@#$%^&*()_+-=',
-        "I'm learning Python.",
-        ""
-    ]
 
     unittest.main()
