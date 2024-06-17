@@ -12,10 +12,6 @@ Classes:
 
 """
 
-import warnings
-
-from scipy.stats._multivariate import invwishart_frozen
-
 from encoding.utils import TextEncoder
 import numpy as np
 
