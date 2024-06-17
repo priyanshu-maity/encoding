@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The `encoding` Package provides a variety of tools for encoding and decoding text using classical and modern ciphers. It includes implementations for various substitution ciphers, transposition ciphers, and utilities for handling structured data and files.
+The `encoding` package provides a variety of tools for encoding and decoding text using classical and modern ciphers. It includes implementations for various substitution ciphers, transposition ciphers, and utilities for handling structured data and files.
 
 ## Table of Contents
 
