@@ -17,7 +17,7 @@ The `encoding` Package provides a variety of tools for encoding and decoding tex
 - [Contributors](#contributors)
 - [License](#license)
 
-## Installation (#installation)
+## Installation
 
 To install the Encoding Package, simply download it using pip:
 
