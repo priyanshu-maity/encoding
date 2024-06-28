@@ -128,7 +128,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE.txt) 
 For any questions, feedback, or contributions, please feel free to reach out:
 
 - **Developer:** Priyanshu Maity
-- **Email:** priyanshumaity2006@gmail.com
+- **Email:** priyanshu.maity2006@gmail.com
 - **GitHub:** [@cup-of-logic](https://github.com/cup-of-logic)
 
 You can also open an issue in this repository if you encounter any problems or have suggestions for improvements.
