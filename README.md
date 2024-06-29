@@ -48,14 +48,14 @@ The module consists of the following files:
     - `shift` (int): The number of positions to shift each character.
     - `alpha_only` (bool): Whether to encode only alphabetic characters.
   
-  [To learn about Caesar Cipher, click here!](https://github.com/cup-of-logic/encoding)
+  [To learn about Caesar Cipher, click here!](https://www.geeksforgeeks.org/caesar-cipher-in-cryptography/)
 <br><br>
 
 - `AtbashCipher`:
   - Attributes:
     - `alpha_only` (bool): Whether to encode only alphabetic characters.
     
-  [To learn about Atbash Cipher, click here!](https://github.com/cup-of-logic/encoding)
+  [To learn about Atbash Cipher, click here!](https://www.geeksforgeeks.org/implementing-atbash-cipher/)
 <br><br>
     
 - `AffineCipher`:
@@ -64,7 +64,7 @@ The module consists of the following files:
     - `key_b` (int): The additive key.
     - `alpha_only` (bool): Whether to encode only alphabetic characters.
 
-  [To learn about Affine Cipher, click here!](https://github.com/cup-of-logic/encoding)
+  [To learn about Affine Cipher, click here!](https://www.geeksforgeeks.org/implementation-affine-cipher/)
 <br><br>
 
 - `VigenereCipher`:
@@ -73,7 +73,7 @@ The module consists of the following files:
     - `alpha_only` (bool): Whether to encode only alphabetic characters.
     - `final_key` (str): The repeated key to match the length of the text.
 
-  [To learn about Vigenère Cipher, click here!](https://github.com/cup-of-logic/encoding)
+  [To learn about Vigenère Cipher, click here!](https://www.geeksforgeeks.org/vigenere-cipher/)
 <br><br>
 
 ### Transposition Ciphers
@@ -83,7 +83,7 @@ The module consists of the following files:
     - `rails` (int): The number of rails to use in the cipher.
     - `rf_arr` (ndarray): The array used to store the zig-zag pattern of characters.
   
-    - [To learn about Rail Fence Cipher, click here!](https://github.com/cup-of-logic/encoding)
+    - [To learn about Rail Fence Cipher, click here!](https://www.geeksforgeeks.org/rail-fence-cipher-encryption-decryption/)
 <br><br>
 
 - `ColumnarTranspositionCipher`:
@@ -93,7 +93,7 @@ The module consists of the following files:
     - `txt_arr` (ndarray): The array used to store the characters in columnar order.
     - `order_list` (list): The order of columns based on the key.
 
-  [To learn about Columnar Transposition Cipher, click here!](https://github.com/cup-of-logic/encoding)
+  [To learn about Columnar Transposition Cipher, click here!](https://www.geeksforgeeks.org/columnar-transposition-cipher/)
 <br><br>
 
 ## Usage
