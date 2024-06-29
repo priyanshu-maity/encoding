@@ -83,7 +83,7 @@ The module consists of the following files:
     - `rails` (int): The number of rails to use in the cipher.
     - `rf_arr` (ndarray): The array used to store the zig-zag pattern of characters.
   
-    - [To learn about Rail Fence Cipher, click here!](https://www.geeksforgeeks.org/rail-fence-cipher-encryption-decryption/)
+  [To learn about Rail Fence Cipher, click here!](https://www.geeksforgeeks.org/rail-fence-cipher-encryption-decryption/)
 <br><br>
 
 - `ColumnarTranspositionCipher`:
