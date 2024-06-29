@@ -104,11 +104,16 @@ print(f"Decoded: {decoded}")
 
 ## Installation
 
-To use this module, clone the repository and import the desired classes:
+To use this module, download it from github using the command:
 
 ```bash
-git clone https://github.com/yourusername/encoding-module.git
-cd encoding-module
+pip install git+https://github.com/cup-of-logic/encoding.git
+```
+
+Or, you can install it directly from PyPI using the command:
+
+```bash
+pip install encoding
 ```
 
 ## Contributing
@@ -133,4 +138,4 @@ For any questions, feedback, or contributions, please feel free to reach out:
 
 You can also open an issue in this repository if you encounter any problems or have suggestions for improvements.
 
-Project Link: [Encoding](https://github.com/cup-of-logic/encoding)
+Project Link: [encoding](https://github.com/cup-of-logic/encoding)
