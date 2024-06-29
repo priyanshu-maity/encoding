@@ -99,7 +99,7 @@ print(f"Decoded: {decoded}")
 
 ## Requirements
 
-* Python 3.12
+* Python 3.6
 * NumPy
 
 ## Installation
