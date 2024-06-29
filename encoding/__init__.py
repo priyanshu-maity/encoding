@@ -8,7 +8,7 @@ Modules:
     utils: Provides TextEncoder, Pipeline, and Salt for text encoding and transformation.
 """
 
-from encoding.utils import TextEncoder, Pipeline, Salt
+from .utils import TextEncoder, Pipeline, Salt
 
 __all__ = [
     'TextEncoder',
