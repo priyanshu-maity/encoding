@@ -47,16 +47,25 @@ The module consists of the following files:
   - Attributes:
     - `shift` (int): The number of positions to shift each character.
     - `alpha_only` (bool): Whether to encode only alphabetic characters.
+  
+  [To learn about Caesar Cipher, click here!](https://github.com/cup-of-logic/encoding)
+<br><br>
 
 - `AtbashCipher`:
   - Attributes:
     - `alpha_only` (bool): Whether to encode only alphabetic characters.
-
+    
+  [To learn about Atbash Cipher, click here!](https://github.com/cup-of-logic/encoding)
+<br><br>
+    
 - `AffineCipher`:
   - Attributes:
     - `key_a` (int): The multiplicative key.
     - `key_b` (int): The additive key.
     - `alpha_only` (bool): Whether to encode only alphabetic characters.
+
+  [To learn about Affine Cipher, click here!](https://github.com/cup-of-logic/encoding)
+<br><br>
 
 - `VigenereCipher`:
   - Attributes:
@@ -64,12 +73,18 @@ The module consists of the following files:
     - `alpha_only` (bool): Whether to encode only alphabetic characters.
     - `final_key` (str): The repeated key to match the length of the text.
 
+  [To learn about Vigenère Cipher, click here!](https://github.com/cup-of-logic/encoding)
+<br><br>
+
 ### Transposition Ciphers
 
 - `RailFenceCipher`:
   - Attributes:
     - `rails` (int): The number of rails to use in the cipher.
     - `rf_arr` (ndarray): The array used to store the zig-zag pattern of characters.
+  
+    - [To learn about Rail Fence Cipher, click here!](https://github.com/cup-of-logic/encoding)
+<br><br>
 
 - `ColumnarTranspositionCipher`:
   - Attributes:
@@ -78,12 +93,15 @@ The module consists of the following files:
     - `txt_arr` (ndarray): The array used to store the characters in columnar order.
     - `order_list` (list): The order of columns based on the key.
 
+  [To learn about Columnar Transposition Cipher, click here!](https://github.com/cup-of-logic/encoding)
+<br><br>
+
 ## Usage
 
 Here's a basic example of how to use a cipher from this module:
 
 ```python
-from ciphers.substitution import CaesarCipher
+from encoding.ciphers.substitution import CaesarCipher
 
 # Create a Caesar cipher with a shift of 3
 caesar = CaesarCipher(shift=3)
@@ -100,7 +118,7 @@ print(f"Decoded: {decoded}")
 ## Requirements
 
 * Python (>=3.6)
-* NumPy
+* numpy
 
 ## Installation
 
