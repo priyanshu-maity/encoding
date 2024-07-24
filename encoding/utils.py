@@ -244,18 +244,18 @@ class Salt:
             str: The salted text.
         """
         random.setstate(self.random_state)
-        match self.position:
-            case 'front':
-                return self.__get_salt() + text
+        
+        if self.position == 'front':
+            return self.__get_salt() + text
 
-            case 'end':
-                return text + self.__get_salt()
+        elif self.position == 'end':
+            return text + self.__get_salt()
 
-            case 'between':
-                salts = []
-                for i in range(len(text)):
-                    salts.append(self.__get_salt())
-                return ''.join([text[i] + salts[i] for i in range(len(salts))])
+        elif self.position == 'between':
+            salts = []
+            for i in range(len(text)):
+                salts.append(self.__get_salt())
+            return ''.join([text[i] + salts[i] for i in range(len(salts))])
 
     def decode(self, text: str) -> str:
         """
@@ -268,22 +268,22 @@ class Salt:
             str: The desalted text.
         """
         random.setstate(self.random_state)
-        match self.position:
-            case 'front':
-                return text.removeprefix(self.__get_salt())
+        
+        if self.position == 'front':
+            return text.removeprefix(self.__get_salt())
 
-            case 'end':
-                return text.removesuffix(self.__get_salt())
+        if self.position == 'end':
+            return text.removesuffix(self.__get_salt())
 
-            case 'between':
-                pure_text = ''
-                try:
-                    i = 0
-                    while True:
-                        pure_text += text[i]
-                        i += len(self.__get_salt()) + 1
-                except IndexError:
-                    return pure_text
+        if self.position == 'between':
+            pure_text = ''
+            try:
+                i = 0
+                while True:
+                    pure_text += text[i]
+                    i += len(self.__get_salt()) + 1
+            except IndexError:
+                return pure_text
 
     def __get_salt(self) -> str:
         """
