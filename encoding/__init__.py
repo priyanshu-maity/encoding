@@ -1,4 +1,3 @@
-from .ciphers import transposition
-from .ciphers import substitution
+from .ciphers import transposition, substitution
 
 __all__ = ['transposition', 'substitution']
