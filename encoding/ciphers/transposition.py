@@ -133,15 +133,14 @@ class RailFenceCipher(metaclass=TextEncoder):
             elif i == 0:
                 i_increasing = True
 
-            match mode:
-                case 'fill':
-                    if j >= len(text):
-                        break
-                    self.rf_arr[i][j] = text[j]
-                case 'get':
-                    text += self.rf_arr[i][j]
-                case _:
-                    raise ValueError("Mode cannot be anything other than 'fill' or 'get'.")
+            if mode == 'fill':
+                if j >= len(text):
+                    break
+                self.rf_arr[i][j] = text[j]
+            elif mode == 'get':
+                text += self.rf_arr[i][j]
+            else:
+                raise ValueError("Mode cannot be anything other than 'fill' or 'get'.")
 
             if i_increasing:
                 i += 1
