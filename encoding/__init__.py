@@ -1,5 +1,5 @@
 from . import utils
 from . import ciphers
-from .ciphers import transpostion, substitution
+from .ciphers import transposition, substitution
 
-__all__ = ['utils', 'ciphers', 'ciphers.transpostion', 'ciphers.substitution']
+__all__ = ['utils', 'ciphers', 'transposition', 'substitution']
