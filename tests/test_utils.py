@@ -10,7 +10,7 @@ global_pipeline = Pipeline([
         (Salt(), 'salt'),
         (RailFenceCipher(), 'rail_fence'),
         (CaesarCipher(), 'caesar'),
-        (VigenereCipher(), 'vigenere')
+        (VigenereCipher(), 'vigenere'),
     ])
 
 sample_strings = [
@@ -19,6 +19,55 @@ sample_strings = [
     'Random Characters: !@#$%^&*()_+-=',
     "I'm learning Python.",
     ""
+]
+
+sample_dicts = [
+    {
+        "name": "Priyanshu",
+        "age": 30,
+        "city": "Delhi"
+    },
+
+    {
+        "employee": {
+            "name": "John Doe",
+            "id": 1234,
+            "department": "HR"
+        },
+        "office": {
+            "location": "New York",
+            "floor": 5
+        }
+    },
+
+    {
+        "fruits": ["apple", "banana", "cherry"],
+        "vegetables": ["carrot", "broccoli", "spinach"]
+    },
+
+    {
+        "boolean": True,
+        "number": 42,
+        "string": "Hello World",
+        "list": [1, 2, 3],
+        "nested_dict": {
+            "key1": "value1",
+            "key2": "value2"
+        }
+    },
+
+    {
+        "item1": {
+            "name": "Laptop",
+            "quantity": 10,
+            "price": 800
+        },
+        "item2": {
+            "name": "Mouse",
+            "quantity": 50,
+            "price": 20
+        }
+    }
 ]
 
 
@@ -94,6 +143,7 @@ class TestSalt(unittest.TestCase):
             desaulted_text = salt.decode(salted_text)
 
             self.assertEqual(sample_string, desaulted_text)
+
     def test_salt_between(self):
         salt = Salt(position='between')
 
@@ -165,35 +215,54 @@ class TestSDE(unittest.TestCase):
 
 
 class TestTFE(unittest.TestCase):
-    def test(self):
+    def test_f2f(self):
         encoder = TextFileEncoder(encoder=global_pipeline)
 
         with open("sample_text_file.txt", 'r') as file:
             sample_text = file.read()
 
-        encoder.encode(file="sample_text_file.txt")
-        encoder.decode(file="sample_text_file.txt")
+        encoder.encode(data=open("sample_text_file.txt", 'r'), file_out=open("encoded_text.txt", 'w'))
+        encoder.decode(data=open("encoded_text.txt", 'r'), file_out=open("sample_text_file.txt", 'w'))
 
         with open("sample_text_file.txt", 'r') as file:
             decoded_text = file.read()
 
         self.assertEqual(sample_text, decoded_text)
 
+    def test_s2f(self):
+        encoder = TextFileEncoder(encoder=global_pipeline)
+
+        for sample_string in sample_strings:
+
+            encoder.encode(data=sample_string, file_out=open("encoded_text.txt", 'w'))
+            decoded_text = encoder.decode(data=open("encoded_text.txt", 'r'))
+
+            self.assertEqual(sample_string, decoded_text)
+
 
 class TestJFE(unittest.TestCase):
-    def test(self):
+    def test_f2f(self):
         encoder = JSONFileEncoder(encoder=global_pipeline)
 
         with open("sample_json_file.json", 'r') as file:
             sample_json = json.load(file)
 
-        encoder.encode(file="sample_json_file.json")
-        encoder.decode(file="sample_json_file.json")
+        encoder.encode(data=open("sample_json_file.json", 'r'), file_out=open("encoded_json.json", 'w'))
+        encoder.decode(data=open("encoded_json.json", 'r'), file_out=open("sample_json_file.json", 'w'))
 
         with open("sample_json_file.json", 'r') as file:
             decoded_json = json.load(file)
 
         self.assertEqual(sample_json, decoded_json)
+
+    def test_d2f(self):
+        encoder = JSONFileEncoder(encoder=global_pipeline)
+
+        for sample_dict in sample_dicts:
+            encoder.encode(data=sample_dict, file_out=open("encoded_json.json", 'w'))
+            decoded_dict = encoder.decode(data=open("encoded_json.json", 'r'))
+
+            self.assertEqual(sample_dict, decoded_dict)
 
 
 if __name__ == '__main__':

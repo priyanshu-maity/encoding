@@ -484,5 +484,3 @@ class VigenereCipher(metaclass=TextEncoder):
             matrix[i] = np.roll(elements, -i)
 
         return matrix
-
-

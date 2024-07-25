@@ -14,9 +14,11 @@ Classes:
 
 """
 
+import io
 import inspect
 import random
 import json
+from typing import Union, TextIO
 
 
 class TextEncoder(type):
@@ -243,6 +245,9 @@ class Salt:
         Returns:
             str: The salted text.
         """
+        if text == '':
+            return text
+
         random.setstate(self.random_state)
         
         if self.position == 'front':
@@ -267,6 +272,9 @@ class Salt:
         Returns:
             str: The desalted text.
         """
+        if text == '':
+            return text
+
         random.setstate(self.random_state)
         
         if self.position == 'front':
@@ -482,8 +490,8 @@ class TextFileEncoder:
         encoder (object): The encoder object to be used for encoding and decoding.
 
     Methods:
-        encode(file, file_out): Encodes the content of a text file.
-        decode(file, file_out): Decodes the content of a text file.
+        encode(data, file_out, return_text): Encodes the content of a text file.
+        decode(data, file_out, return_text): Decodes the content of a text file.
     """
 
     def __init__(self, encoder: object):
@@ -495,51 +503,73 @@ class TextFileEncoder:
         """
         self.encoder = encoder
 
-    def encode(self, file: str, file_out: str = None) -> None:
+    def encode(self, data: Union[TextIO, str], file_out: TextIO = None, return_text: bool = True):
         """
         Encodes the content of a text file.
 
         Args:
-            file (str): The path to the input file.
-            file_out (str): The path to the output file. If None, the input file will be overwritten.
+            data (TextIO | str): The file object in read mode or the text to be encrypted
+            file_out (TextIO): The output file object in write mode. If None, no files will be overwritten.
+            return_text (bool): Returns the encoded text if set to True (default: True)
 
         Raises:
-            ValueError: If the file extensions are not '.txt'.
+            ValueError: If anything else is passed, other than text file object or string.
         """
-        if file[file.rindex('.') + 1:] != 'txt' or (file_out[file_out.rindex('.') + 1:] != 'txt' if file_out else False):
-            raise ValueError("TextFileEncoder only supports text files with extension: '.txt'")
+        enc_text = []
+        if isinstance(data, str):
+            lines = data.splitlines()
+            for line in lines:
+                enc_text.append(self.encoder.encode(line))
+        elif isinstance(data, io.TextIOBase):
+            with data:
+                for line in data:
+                    enc_text.append(self.encoder.encode(line.rstrip('\n')))
+        else:
+            raise ValueError("TextFileEncoder only supports text files and strings.")
 
-        enc_text = ''
-        with open(file, 'r') as f:
-            for line in f:
-                line = line.strip()
-                enc_text += self.encoder.encode(line) + '\n'
+        encoded_result = '\n'.join(enc_text)
 
-        with open(file_out if file_out else file, 'w') as f:
-            f.write(enc_text)
+        if file_out is not None:
+            with file_out:
+                file_out.write(encoded_result)
+                file_out.write('\n')
 
-    def decode(self, file: str, file_out: str = None) -> None:
+        if return_text:
+            return encoded_result
+
+    def decode(self, data: Union[TextIO, str], file_out: TextIO = None, return_text: bool = True):
         """
         Decodes the content of a text file.
 
         Args:
-            file (str): The path to the input file.
-            file_out (str): The path to the output file. If None, the input file will be overwritten.
+            data (TextIO | str): The file object in read mode or the text to be decrypted.
+            file_out (TextIO): The output file object in write mode. If None, no files will be overwritten.
+            return_text (bool): Returns the decoded text if set to True (default: True)
 
         Raises:
-            ValueError: If the file extensions are not '.txt'.
+            ValueError: If anything else is passed, other than text file object or string.
         """
-        if file[file.rindex('.') + 1:] != 'txt' or (file_out[file_out.rindex('.') + 1:] != 'txt' if file_out else False):
-            raise ValueError("TextFileEncoder only supports text files with extension: '.txt'")
+        dec_text = []
+        if isinstance(data, str):
+            lines = data.splitlines()
+            for line in lines:
+                dec_text.append(self.encoder.decode(line))
+        elif isinstance(data, io.TextIOBase):
+            with data:
+                for line in data:
+                    dec_text.append(self.encoder.decode(line.rstrip('\n')))
+        else:
+            raise ValueError("TextFileEncoder only supports text files and strings.")
 
-        dec_text = ''
-        with open(file, 'r') as f:
-            for line in f:
-                line = line.strip()
-                dec_text += self.encoder.decode(line) + '\n'
+        decoded_result = '\n'.join(dec_text)
 
-        with open(file_out if file_out else file, 'w') as f:
-            f.write(dec_text)
+        if file_out is not None:
+            with file_out:
+                file_out.write(decoded_result)
+                file_out.write('\n')
+
+        if return_text:
+            return decoded_result
 
 
 class JSONFileEncoder:
@@ -547,11 +577,11 @@ class JSONFileEncoder:
     A class for encoding and decoding JSON files.
 
     Attributes:
-        encoder (StructuredDataEncoder): The encoder object to be used for encoding and decoding.
+        encoder (object): The encoder object to be used for encoding and decoding.
 
     Methods:
-        encode(file, file_out, indent): Encodes the content of a JSON file.
-        decode(file, file_out, indent): Decodes the content of a JSON file.
+        encode(data, file_out, return_text, indent): Encodes the content of a JSON file.
+        decode(data, file_out, return_text, indent): Decodes the content of a JSON file.
     """
 
     def __init__(self, encoder: object):
@@ -563,48 +593,59 @@ class JSONFileEncoder:
         """
         self.encoder = StructuredDataEncoder(encoder=encoder)
 
-    def encode(self, file: str, file_out: str = None, indent: int = 4) -> None:
+    def encode(self, data: Union[TextIO, dict], file_out: TextIO = None, indent: int = 4, return_dict: bool = True):
         """
         Encodes the content of a JSON file.
 
         Args:
-            file (str): The path to the input file.
-            file_out (str): The path to the output file. If None, the input file will be overwritten.
+            data (TextIO | dict): The JSON file object in read mode or the text to be encrypted.
+            file_out (TextIO): The output file object in write mode. If None, no files will be overwritten.
             indent (int): The number of spaces to use for indentation in the output file.
+            return_dict (bool): Returns the encoded dictionary if set to True (default: True)
 
         Raises:
-            ValueError: If the file extensions are not '.json'.
+            ValueError: If anything else is passed, other than JSON object or string.
         """
-        if file[file.rindex('.') + 1:] != 'json' or (file_out[file_out.rindex('.') + 1:] != 'json' if file_out else False):
-            raise ValueError("JSONFileEncoder only supports text files with extension: '.json'")
-
-        with open(file, 'r') as f:
-            data = json.load(f)
+        if isinstance(data, io.TextIOBase):
+            with data:
+                data = json.load(data)
+        elif not isinstance(data, dict):
+            raise ValueError("JSONFileEncoder only supports JSON files and dictionaries")
 
         enc_data = self.encoder.encode(data)
 
-        with open(file_out if file_out else file, 'w') as f:
-            json.dump(enc_data, f, indent=indent)
+        if file_out is not None:
+            with file_out:
+                json.dump(enc_data, file_out, indent=indent)
 
-    def decode(self, file: str, file_out: str = None, indent: int = 4) -> None:
+        if return_dict:
+            return enc_data
+
+    def decode(self, data: Union[TextIO, dict], file_out: TextIO = None, indent: int = 4, return_dict: bool = True):
         """
         Decodes the content of a JSON file.
 
         Args:
-            file (str): The path to the input file.
-            file_out (str): The path to the output file. If None, the input file will be overwritten.
+            data (TextIO | dict): The JSON file object in read mode or the text to be decrypted.
+            file_out (TextIO): The output file object in write mode. If None, no files will be overwritten.
             indent (int): The number of spaces to use for indentation in the output file.
+            return_dict (bool): Returns the decoded dictionary if set to True (default: True)
 
         Raises:
-            ValueError: If the file extensions are not '.json'.
+            ValueError: If anything else is passed, other than JSON object or string.
         """
-        if file[file.rindex('.') + 1:] != 'json' or (file_out[file_out.rindex('.') + 1:] != 'json' if file_out else False):
-            raise ValueError("JSONFileEncoder only supports text files with extension: '.json'")
-
-        with open(file, 'r') as f:
-            data = json.load(f)
+        if isinstance(data, io.TextIOBase):
+            with data:
+                data = json.load(data)
+        elif not isinstance(data, dict):
+            raise ValueError("JSONFileEncoder only supports JSON files and dictionaries")
 
         dec_data = self.encoder.decode(data)
 
-        with open(file_out if file_out else file, 'w') as f:
-            json.dump(dec_data, f, indent=indent)
+        if file_out is not None:
+            with file_out:
+                json.dump(dec_data, file_out, indent=indent)
+                file_out.close()
+
+        if return_dict:
+            return dec_data

@@ -65,7 +65,7 @@ class RailFenceCipher(metaclass=TextEncoder):
 
         if not any(32 <= ord(char) <= 126 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
-        self.rf_arr = np.zeros((self.rails, len(text)), dtype='str')
+        self.rf_arr = np.zeros((self.rails, len(text)), dtype='<U1')
         enc_text = ''
 
         self.__zig_zag(mode='fill', text=text)
@@ -95,7 +95,7 @@ class RailFenceCipher(metaclass=TextEncoder):
         if not any(32 <= ord(char) <= 126 for char in text):
             raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
 
-        self.rf_arr = np.zeros((self.rails, len(text)), dtype='str')
+        self.rf_arr = np.zeros((self.rails, len(text)), dtype='<U1')
         text_index = 0
 
         self.__zig_zag(mode='fill', text='*' * len(text))
@@ -213,7 +213,7 @@ class ColumnarTranspositionCipher(metaclass=TextEncoder):
         if self.filler in text:
             warnings.warn(f"Filler '{self.filler}' is present in the text which might lead to unwanted issues.")
 
-        self.txt_arr = np.zeros((math.ceil(len(text)/len(self.key)), len(self.key)), dtype='str')
+        self.txt_arr = np.zeros((math.ceil(len(text)/len(self.key)), len(self.key)), dtype='<U1')
         text_index = 0
         enc_text = ''
 
@@ -252,7 +252,7 @@ class ColumnarTranspositionCipher(metaclass=TextEncoder):
             raise ValueError("Text Encoders cannot handle characters with ASCII < 32 or ASCII > 127")
 
         rows = len(text)//len(self.key)
-        self.txt_arr = np.zeros((rows, len(self.key)), dtype='str')
+        self.txt_arr = np.zeros((rows, len(self.key)), dtype='<U1')
 
         for i in range(len(self.order_list)):
             for j in range(rows):
