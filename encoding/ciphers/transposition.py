@@ -18,7 +18,7 @@ import warnings
 from encoding.utils import TextEncoder
 
 
-class RailFenceCipher(metaclass=TextEncoder):
+class RailFenceCipher(TextEncoder):
     """
     Implements the Rail Fence Cipher for encoding and decoding text.
 
@@ -155,7 +155,7 @@ class RailFenceCipher(metaclass=TextEncoder):
             return text
 
 
-class ColumnarTranspositionCipher(metaclass=TextEncoder):
+class ColumnarTranspositionCipher(TextEncoder):
     """
     Implements the Columnar Transposition Cipher for encoding and decoding text.
 

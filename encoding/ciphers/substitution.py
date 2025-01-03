@@ -16,7 +16,7 @@ from encoding.utils import TextEncoder
 import numpy as np
 
 
-class CaesarCipher(metaclass=TextEncoder):
+class CaesarCipher(TextEncoder):
     """
     Implements the Caesar Cipher for encoding and decoding text.
 
@@ -113,7 +113,7 @@ class CaesarCipher(metaclass=TextEncoder):
         return dec_text
 
 
-class AtbashCipher(metaclass=TextEncoder):
+class AtbashCipher(TextEncoder):
     """
     Implements the Atbash Cipher for encoding and decoding text.
 
@@ -192,7 +192,7 @@ class AtbashCipher(metaclass=TextEncoder):
         return self.encode(text=text)
 
 
-class AffineCipher(metaclass=TextEncoder):
+class AffineCipher(TextEncoder):
     """
     Implements the Affine Cipher for encoding and decoding text.
 
@@ -348,7 +348,7 @@ class AffineCipher(metaclass=TextEncoder):
         return a == 1
 
 
-class VigenereCipher(metaclass=TextEncoder):
+class VigenereCipher(TextEncoder):
     """
     Implements the Vigenere Cipher for encoding and decoding text.
 

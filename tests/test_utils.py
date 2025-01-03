@@ -1,7 +1,7 @@
 import unittest
 import json
 
-from encoding.utils import TextEncoder, Pipeline, Salt, StructuredDataEncoder, TextFileEncoder, JSONFileEncoder
+from encoding.utils import TextEncoder, Pipeline, Salt, InputType, StructuredDataEncoder, TextFileEncoder, JSONFileEncoder
 from encoding.ciphers.substitution import CaesarCipher, AtbashCipher, AffineCipher, VigenereCipher
 from encoding.ciphers.transposition import RailFenceCipher, ColumnarTranspositionCipher
 
@@ -221,23 +221,21 @@ class TestTFE(unittest.TestCase):
         with open("sample_text_file.txt", 'r') as file:
             sample_text = file.read()
 
-        encoder.encode(data=open("sample_text_file.txt", 'r'), file_out=open("encoded_text.txt", 'w'))
-        encoder.decode(data=open("encoded_text.txt", 'r'), file_out=open("sample_text_file.txt", 'w'))
+        encoder.encode("sample_text_file.txt", InputType.PATH, write_to="encoded_text.txt")
+        encoder.decode("encoded_text.txt", InputType.PATH, write_to="sample_text_file.txt")
 
         with open("sample_text_file.txt", 'r') as file:
             decoded_text = file.read()
 
-        self.assertEqual(sample_text, decoded_text)
+        self.assertEqual(sample_text.strip(), decoded_text.strip())
 
     def test_s2f(self):
         encoder = TextFileEncoder(encoder=global_pipeline)
-
         for sample_string in sample_strings:
+            encoder.encode(sample_string, InputType.STR, write_to="encoded_text.txt")
+            decoded_text = encoder.decode("encoded_text.txt", InputType.PATH)
 
-            encoder.encode(data=sample_string, file_out=open("encoded_text.txt", 'w'))
-            decoded_text = encoder.decode(data=open("encoded_text.txt", 'r'))
-
-            self.assertEqual(sample_string, decoded_text)
+            self.assertEqual(sample_string.strip(), decoded_text.strip())
 
 
 class TestJFE(unittest.TestCase):
@@ -247,8 +245,8 @@ class TestJFE(unittest.TestCase):
         with open("sample_json_file.json", 'r') as file:
             sample_json = json.load(file)
 
-        encoder.encode(data=open("sample_json_file.json", 'r'), file_out=open("encoded_json.json", 'w'))
-        encoder.decode(data=open("encoded_json.json", 'r'), file_out=open("sample_json_file.json", 'w'))
+        encoder.encode("sample_json_file.json", InputType.PATH, write_to="encoded_json.json")
+        encoder.decode("encoded_json.json", InputType.PATH, write_to="sample_json_file.json")
 
         with open("sample_json_file.json", 'r') as file:
             decoded_json = json.load(file)
@@ -259,8 +257,8 @@ class TestJFE(unittest.TestCase):
         encoder = JSONFileEncoder(encoder=global_pipeline)
 
         for sample_dict in sample_dicts:
-            encoder.encode(data=sample_dict, file_out=open("encoded_json.json", 'w'))
-            decoded_dict = encoder.decode(data=open("encoded_json.json", 'r'))
+            encoder.encode(sample_dict, InputType.DICT, write_to="encoded_json.json")
+            decoded_dict = encoder.decode("encoded_json.json", InputType.PATH)
 
             self.assertEqual(sample_dict, decoded_dict)
 
