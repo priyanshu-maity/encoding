@@ -5,7 +5,7 @@ with open('README.md', 'r', encoding='utf-8') as f:
 
 setup(
     name='encoding',
-    version='0.1.2',
+    version='0.1.3',
     author='Priyanshu Maity | Abhineet Bhattacharjee',
     author_email='priyanshu.maity2006@gmail.com | abhineetbhatacharjee@gmail.com',
     description='A package for encoding and decoding text using various ciphers and transformations',
