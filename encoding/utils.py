@@ -17,7 +17,7 @@ Classes:
 import random
 import json
 from pathlib import Path
-from typing import Optional, Self, Any
+from typing import Optional, Self, Any, Union
 from abc import ABC, abstractmethod
 from enum import Enum
 
@@ -65,7 +65,7 @@ class Pipeline(TextEncoder):
         remove_encoders(encoder_names): Removes encoders from the sequence by their names.
     """
 
-    def __init__(self: Self, encoders: list[tuple[TextEncoder | "Pipeline", str]]):
+    def __init__(self: Self, encoders: list[tuple[Union[TextEncoder, "Pipeline"], str]]):
         """
         Initializes the Pipeline with a list of encoders.
 
