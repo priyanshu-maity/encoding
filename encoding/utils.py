@@ -55,7 +55,7 @@ class Pipeline(TextEncoder):
     A class for managing a sequence of encoders and applying them to text.
 
     Attributes:
-        encoders (list[tuple[TextEncoder | Pipeline, str]]): A list of encoder classes and their names.
+        encoders (list[tuple[Union[TextEncoder, "Pipeline"], str]]): A list of encoder classes and their names.
         encoder_names (list[str]): A list of encoder names.
 
     Methods:
@@ -70,7 +70,7 @@ class Pipeline(TextEncoder):
         Initializes the Pipeline with a list of encoders.
 
         Args:
-            encoders (list[tuple[TextEncoder, str]]): A list of tuples containing encoder class objects and their names.
+            encoders (list[tuple[Union[TextEncoder, "Pipeline"], str]]): A list of tuples containing encoder class objects and their names.
 
         Raises:
             ValueError: If the encoders are not passed as a list of tuples with class object and name.
@@ -78,7 +78,7 @@ class Pipeline(TextEncoder):
         self.encoder_names: list[str] = []
 
         if self.__is_valid(encoders):
-            self.encoders: list[tuple[TextEncoder | "Pipeline", str]] = encoders
+            self.encoders: list[tuple[Union[TextEncoder, "Pipeline"], str]] = encoders
             self.__update_encoder_names()
         else:
             raise ValueError("Encoders must be passed as a tuple of class object and names of the encoders.")
@@ -113,12 +113,12 @@ class Pipeline(TextEncoder):
 
         return text
 
-    def add_encoders(self: Self, encoders: list[tuple[TextEncoder | "Pipeline", str]]):
+    def add_encoders(self: Self, encoders: list[tuple[Union[TextEncoder, "Pipeline"], str]]):
         """
         Adds more encoders to the sequence.
 
         Args:
-            encoders (list[tuple[TextEncoder | "Pipeline", str]]): A list of tuples containing encoder class objects and their names.
+            encoders (list[tuple[Union[TextEncoder, "Pipeline"], str]]): A list of tuples containing encoder class objects and their names.
 
         Raises:
             ValueError: If the encoders are not passed as tuples of class object and names.
